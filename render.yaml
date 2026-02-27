@@ -1,9 +1,10 @@
 services:
   - type: web
     name: immo-marly
-    env: python
+    runtime: python
+    pythonVersion: "3.11.0"
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: python -m gunicorn app:app
     envVars:
       - key: ANTHROPIC_API_KEY
-        sync: false   # à renseigner manuellement dans le dashboard Render
+        sync: false
