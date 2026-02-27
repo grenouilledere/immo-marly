@@ -1225,7 +1225,8 @@
           Posez-moi vos questions sur les tendances, les prix, les volumes ou les perspectives du marché.
         </div>
       </div>
-      <div class="ai-input-row">
+      <div style="text-align:right;padding:0.3rem 1rem;border-bottom:1px solid var(--border)"><button onclick="localApiKey='';localStorage.removeItem('immo_api_key');alert('Clé supprimée. Votre prochaine question vous demandera une nouvelle clé.')" style="font-family:'DM Mono',monospace;font-size:0.62rem;background:none;border:none;color:var(--warm-gray);cursor:pointer;text-decoration:underline">🔑 Changer la clé API (mode local)</button></div>
+    <div class="ai-input-row">
         <input type="text" id="ai-input" placeholder="Posez votre question sur le marché…" onkeydown="if(event.key==='Enter')sendAI()">
         <button class="ai-send" onclick="sendAI()">Envoyer →</button>
       </div>
@@ -1813,36 +1814,89 @@ TOTAL VENTES CHARGÉES : ${allSales.length} transactions
 Réponds en français, de manière professionnelle mais accessible. Utilise les données précises. Sois concis (max 200 mots).`;
 }
 
+// Clé API locale (pour usage hors-Render)
+let localApiKey = localStorage.getItem('immo_api_key') || '';
+
+function getOrAskApiKey() {
+  if (localApiKey) return localApiKey;
+  const key = prompt(
+    '🔑 Clé API Anthropic requise pour l\'analyse IA\n\n' +
+    'Obtenez-la gratuitement sur console.anthropic.com\n' +
+    '(commence par sk-ant-...)'
+  );
+  if (key && key.startsWith('sk-ant')) {
+    localApiKey = key;
+    localStorage.setItem('immo_api_key', key);
+    return key;
+  }
+  return null;
+}
+
 async function sendAI() {
   const input = document.getElementById('ai-input');
   const q = input.value.trim();
   if (!q) return;
   
-  const messages = document.getElementById('ai-messages');
-  messages.innerHTML += `<div class="msg msg-user">${q}</div>`;
+  const messagesEl = document.getElementById('ai-messages');
+  messagesEl.innerHTML += `<div class="msg msg-user">${q}</div>`;
   input.value = '';
   
   const typingId = 'typing-' + Date.now();
-  messages.innerHTML += `<div class="msg msg-ai" id="${typingId}"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
-  messages.scrollTop = messages.scrollHeight;
+  messagesEl.innerHTML += `<div class="msg msg-ai" id="${typingId}"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  
+  // Détecter si on est sur Render (http/https) ou en local (file://)
+  const isHosted = window.location.protocol === 'https:' || window.location.protocol === 'http:';
   
   try {
-    const resp = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: buildContext(),
-        messages: [{ role: 'user', content: q }]
-      })
-    });
+    let resp;
+    
+    if (isHosted) {
+      // Sur Render : utilise le proxy backend sécurisé
+      resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: buildContext(),
+          messages: [{ role: 'user', content: q }]
+        })
+      });
+    } else {
+      // En local : appel direct avec clé API saisie par l'utilisateur
+      const apiKey = getOrAskApiKey();
+      if (!apiKey) {
+        document.getElementById(typingId).innerHTML = `<em style="color:var(--rust)">❌ Clé API non fournie. Rechargez et réessayez.</em>`;
+        return;
+      }
+      resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: buildContext(),
+          messages: [{ role: 'user', content: q }]
+        })
+      });
+    }
+    
     const data = await resp.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const text = data.content?.[0]?.text || 'Désolé, erreur lors de la réponse.';
-    document.getElementById(typingId).innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    document.getElementById(typingId).innerHTML = text
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n/g,'<br>');
+      
   } catch(e) {
-    document.getElementById(typingId).innerHTML = `<em style="color:var(--rust)">Erreur de connexion à l'IA. Vérifiez votre connexion.</em>`;
+    console.error('Erreur IA:', e);
+    document.getElementById(typingId).innerHTML = `<em style="color:var(--rust)">❌ ${e.message || 'Erreur de connexion à l\'IA.'}</em>`;
   }
   
-  messages.scrollTop = messages.scrollHeight;
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function askAI(q) {
