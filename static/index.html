@@ -727,6 +727,124 @@
     tbody td:nth-child(4) { display: none; }
   }
 
+
+  /* COURBES CROISÉES */
+  .croise-section {
+    margin-top: 2rem;
+  }
+  .croise-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+  }
+  .croise-section .section-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--warm-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+  .simulateur-box {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .simulateur-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--gold);
+    width: 100%;
+  }
+  .sim-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 140px;
+  }
+  .sim-field label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--warm-gray);
+  }
+  .sim-field input[type=number], .sim-field select {
+    background: #2a2a25;
+    border: 1px solid #4a4a45;
+    color: var(--cream);
+    padding: 0.5rem 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    border-radius: 2px;
+    width: 100%;
+  }
+  .sim-field input[type=range] {
+    width: 100%;
+    accent-color: var(--gold);
+    margin-top: 0.3rem;
+  }
+  .sim-results {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #3a3a35;
+  }
+  .sim-result-item {
+    flex: 1;
+    min-width: 120px;
+  }
+  .sim-result-item .val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .sim-result-item .lbl {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--warm-gray);
+    margin-top: 0.2rem;
+  }
+  .sim-result-item .sub {
+    font-size: 0.72rem;
+    color: #6a6a65;
+    margin-top: 0.1rem;
+  }
+  .croise-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  @media(max-width:900px){ .croise-grid{grid-template-columns:1fr;} }
+  .chart-card.tall .chart-wrap { height: 340px; }
+  @media(max-width:768px){
+    .simulateur-box { padding: 1rem; gap: 1rem; }
+    .sim-field { min-width: 100%; }
+    .sim-result-item .val { font-size: 1.1rem; }
+    .croise-grid { grid-template-columns: 1fr; }
+    .chart-card.tall .chart-wrap { height: 260px; }
+  }
+
 </style>
 </head>
 <body>
@@ -955,6 +1073,82 @@
         <h3>Mensualité simulée pour 500k€ empruntés</h3>
         <div class="subtitle">Crédit 20 ans · impact direct du taux sur l'acheteur</div>
         <div class="chart-wrap"><canvas id="chartMensualite"></canvas></div>
+      </div>
+    </div>
+
+
+    <!-- SECTION COURBES CROISÉES -->
+    <div class="croise-section">
+      <h2>Courbes croisées</h2>
+      <span class="section-sub">Prix de vente · Taux d'emprunt · Mensualité · 2014–2025</span>
+
+      <!-- Simulateur interactif -->
+      <div class="simulateur-box">
+        <h3>🧮 Simulateur de financement — personnalisez votre emprunt</h3>
+        <div class="sim-field">
+          <label>Capital emprunté (€)</label>
+          <input type="number" id="sim-capital" value="500000" step="10000" min="50000" max="3000000" oninput="updateSimulateur()">
+        </div>
+        <div class="sim-field">
+          <label>Durée (années)</label>
+          <select id="sim-duree" onchange="updateSimulateur()">
+            <option value="10">10 ans</option>
+            <option value="15">15 ans</option>
+            <option value="20" selected>20 ans</option>
+            <option value="25">25 ans</option>
+          </select>
+        </div>
+        <div class="sim-field">
+          <label>Taux personnalisé (%)</label>
+          <input type="number" id="sim-taux" value="3.20" step="0.05" min="0.5" max="6" oninput="updateSimulateur()">
+          <input type="range" id="sim-taux-range" value="3.20" step="0.05" min="0.5" max="6" oninput="syncTaux(this.value)">
+        </div>
+        <div class="sim-results">
+          <div class="sim-result-item">
+            <div class="val" id="sim-res-mensualite">—</div>
+            <div class="lbl">Mensualité / mois</div>
+            <div class="sub">Hors assurance</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="val" id="sim-res-cout-total">—</div>
+            <div class="lbl">Coût total du crédit</div>
+            <div class="sub">Intérêts uniquement</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="val" id="sim-res-taux-eff">—</div>
+            <div class="lbl">Taux effectif appliqué</div>
+            <div class="sub">Obs. Crédit Logement</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="val" id="sim-res-pouvoir">—</div>
+            <div class="lbl">Budget achat max Marly</div>
+            <div class="sub">Mensualité ≤ 33% revenus</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Courbes croisées -->
+      <div class="croise-grid">
+        <div class="chart-card tall">
+          <h3>Prix moyen × Mensualité (500k€)</h3>
+          <div class="subtitle">Double axe · Prix Marly-le-Roi & mensualité simulée · 2014–2025</div>
+          <div class="chart-wrap"><canvas id="chartCroisePrixMens"></canvas></div>
+        </div>
+        <div class="chart-card tall">
+          <h3>Taux × Mensualité × Volume</h3>
+          <div class="subtitle">Triple indicateur · corrélation marché · 2014–2025</div>
+          <div class="chart-wrap"><canvas id="chartCroiseTrois"></canvas></div>
+        </div>
+        <div class="chart-card tall">
+          <h3>Effort financier : mensualité vs prix de vente moyen</h3>
+          <div class="subtitle">% du prix financé par la mensualité annuelle · 2014–2025</div>
+          <div class="chart-wrap"><canvas id="chartEffort"></canvas></div>
+        </div>
+        <div class="chart-card tall">
+          <h3>Simulation mensualité selon le taux</h3>
+          <div class="subtitle">Pour votre capital simulé · évolution 2014–2025</div>
+          <div class="chart-wrap"><canvas id="chartSimMensualite"></canvas></div>
+        </div>
       </div>
     </div>
 
@@ -1661,6 +1855,269 @@ function askAI(q) {
 
 
 
+
+// ========== SIMULATEUR & COURBES CROISÉES ==========
+let croiséCharts = {};
+
+function mensualiteCalc(capital, tauxAnnuel, dureeAns) {
+  const r = tauxAnnuel / 100 / 12;
+  const n = dureeAns * 12;
+  if (r === 0) return capital / n;
+  return capital * r * Math.pow(1+r, n) / (Math.pow(1+r, n) - 1);
+}
+
+function syncTaux(val) {
+  document.getElementById('sim-taux').value = parseFloat(val).toFixed(2);
+  updateSimulateur();
+}
+
+function updateSimulateur() {
+  const capital = parseFloat(document.getElementById('sim-capital').value) || 500000;
+  const duree = parseInt(document.getElementById('sim-duree').value) || 20;
+  const taux = parseFloat(document.getElementById('sim-taux').value) || 3.20;
+  
+  // Sync range
+  document.getElementById('sim-taux-range').value = taux;
+  
+  const mens = mensualiteCalc(capital, taux, duree);
+  const coutTotal = (mens * duree * 12) - capital;
+  const revenuNecessaire = mens / 0.33;
+  // Budget max avec la même mensualité au taux actuel
+  const r = taux / 100 / 12;
+  const n = duree * 12;
+  const budgetMax = r === 0 ? mens * n : mens * (Math.pow(1+r,n)-1) / (r * Math.pow(1+r,n));
+  
+  document.getElementById('sim-res-mensualite').textContent = fmtNum(Math.round(mens)) + ' €';
+  document.getElementById('sim-res-cout-total').textContent = fmtNum(Math.round(coutTotal)) + ' €';
+  document.getElementById('sim-res-taux-eff').textContent = taux.toFixed(2) + ' %';
+  document.getElementById('sim-res-pouvoir').textContent = fmtPrice(Math.round(budgetMax));
+  
+  // Mettre à jour le graphique de simulation si déjà construit
+  updateSimChart(capital, duree);
+}
+
+function updateSimChart(capital, duree) {
+  if (!croiséCharts.simMens) return;
+  const moisKeys = Object.keys(TAUX_MENSUELS);
+  const newData = moisKeys.map(k => Math.round(mensualiteCalc(capital, TAUX_MENSUELS[k], duree)));
+  croiséCharts.simMens.data.datasets[0].data = newData;
+  croiséCharts.simMens.data.datasets[0].label = `Mensualité (${fmtNum(capital/1000)}k€ / ${duree}ans)`;
+  croiséCharts.simMens.update('none');
+}
+
+function buildCroiséCharts() {
+  const years = Object.keys(annualStats).map(Number).sort((a,b)=>a-b);
+  const prixAnn = years.map(y => annualStats[y]?.prixMoy || null);
+  const tauxAnn = years.map(y => getTauxAnnuel(y));
+  const volumeAnn = years.map(y => annualStats[y]?.volume || 0);
+  
+  // Mensualités annuelles pour 500k€ / 20 ans
+  const mens500Ann = tauxAnn.map(t => t ? Math.round(mensualiteCalc(500000, t, 20)) : null);
+  // Mensualités mensuelles
+  const moisKeys = Object.keys(TAUX_MENSUELS);
+  const mens500Mois = moisKeys.map(k => Math.round(mensualiteCalc(500000, TAUX_MENSUELS[k], 20)));
+
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 600, easing: 'easeInOutQuart' },
+    plugins: { legend: { labels: { font: { family: 'DM Mono', size: 10 }, color: '#0f0e0b', boxWidth: 14 } } },
+    scales: {
+      x: { grid: { color: '#e8e0d0' }, ticks: { font: { family: 'DM Mono', size: 9 }, color: '#8a8075' } },
+    }
+  };
+
+  // ── Chart 1 : Prix moyen × Mensualité ──────────────────────
+  if (croiséCharts.prixMens) croiséCharts.prixMens.destroy();
+  croiséCharts.prixMens = new Chart(document.getElementById('chartCroisePrixMens'), {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Prix moyen (€)',
+          data: prixAnn,
+          borderColor: '#c8a84b',
+          backgroundColor: 'rgba(200,168,75,0.08)',
+          borderWidth: 2.5, fill: true, tension: 0.3,
+          pointRadius: 5, pointBackgroundColor: '#c8a84b',
+          yAxisID: 'yPrix'
+        },
+        {
+          label: 'Mensualité 500k€/20ans',
+          data: mens500Ann,
+          borderColor: '#4a6741',
+          backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [5,3],
+          tension: 0.3, pointRadius: 4,
+          pointBackgroundColor: '#4a6741',
+          yAxisID: 'yMens'
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { callbacks: {
+        label: ctx => ctx.dataset.yAxisID === 'yPrix' ? fmtPrice(ctx.raw) : fmtNum(ctx.raw) + ' €/mois'
+      }}},
+      scales: {
+        x: baseOpts.scales.x,
+        yPrix: {
+          type: 'linear', position: 'left',
+          grid: { color: '#e8e0d0' },
+          ticks: { font: { family:'DM Mono',size:10 }, color:'#c8a84b', callback: v => Math.round(v/1000)+'k€' }
+        },
+        yMens: {
+          type: 'linear', position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: { font: { family:'DM Mono',size:10 }, color:'#4a6741', callback: v => fmtNum(v)+' €' }
+        }
+      }
+    }
+  });
+
+  // ── Chart 2 : Taux × Mensualité × Volume (triple) ─────────
+  if (croiséCharts.trois) croiséCharts.trois.destroy();
+  croiséCharts.trois = new Chart(document.getElementById('chartCroiseTrois'), {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Nb ventes',
+          data: volumeAnn,
+          backgroundColor: 'rgba(74,103,65,0.65)',
+          borderColor: '#4a6741', borderWidth: 1,
+          yAxisID: 'yVol', order: 3
+        },
+        {
+          label: 'Mensualité 500k€/20ans',
+          data: mens500Ann,
+          type: 'line',
+          borderColor: '#4a6741',
+          backgroundColor: 'transparent',
+          borderWidth: 2, tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#4a6741',
+          yAxisID: 'yMens2', order: 1
+        },
+        {
+          label: 'Taux (%)',
+          data: tauxAnn,
+          type: 'line',
+          borderColor: '#b85c2a',
+          backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [5,3], tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#b85c2a',
+          yAxisID: 'yTaux3', order: 2
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { callbacks: {
+        label: ctx => {
+          if (ctx.dataset.label === 'Taux (%)') return ctx.raw.toFixed(2) + ' %';
+          if (ctx.dataset.label === 'Nb ventes') return ctx.raw + ' ventes';
+          return fmtNum(ctx.raw) + ' €/mois';
+        }
+      }}},
+      scales: {
+        x: baseOpts.scales.x,
+        yVol: { type:'linear', position:'left', grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:9},color:'#4a6741'} },
+        yMens2: { type:'linear', position:'right', grid:{drawOnChartArea:false}, min:1500, max:3500, ticks:{font:{family:'DM Mono',size:9},color:'#4a6741',callback:v=>fmtNum(v)+'€'} },
+        yTaux3: { type:'linear', position:'right', grid:{drawOnChartArea:false}, min:0, max:5, offset:true, ticks:{font:{family:'DM Mono',size:9},color:'#b85c2a',callback:v=>v.toFixed(1)+'%'} }
+      }
+    }
+  });
+
+  // ── Chart 3 : Effort financier ─────────────────────────────
+  // Mensualité annuelle / Prix moyen = % du prix "absorbé" par an par les intérêts
+  const effortData = years.map((y, i) => {
+    const px = prixAnn[i];
+    const t = tauxAnn[i];
+    if (!px || !t) return null;
+    const mensAnn = mensualiteCalc(500000, t, 20) * 12;
+    // Ratio mensualité annuelle vs prix moyen (indice d'accessibilité)
+    return Math.round(mensAnn / px * 100 * 10) / 10;
+  });
+
+  if (croiséCharts.effort) croiséCharts.effort.destroy();
+  croiséCharts.effort = new Chart(document.getElementById('chartEffort'), {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Mensualités annuelles / Prix moyen (%)',
+          data: effortData,
+          backgroundColor: effortData.map(v => v > 40 ? 'rgba(184,92,42,0.8)' : v > 30 ? 'rgba(200,168,75,0.8)' : 'rgba(74,103,65,0.8)'),
+          borderColor: effortData.map(v => v > 40 ? '#b85c2a' : v > 30 ? '#c8a84b' : '#4a6741'),
+          borderWidth: 1, borderRadius: 2,
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins,
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => ctx.raw + '% du prix moyen remboursé/an',
+          afterLabel: ctx => {
+            if (ctx.raw < 30) return '✅ Marché accessible';
+            if (ctx.raw < 40) return '⚠️ Effort modéré';
+            return '🔴 Effort élevé';
+          }
+        }}
+      },
+      scales: {
+        x: baseOpts.scales.x,
+        y: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10},color:'#8a8075',callback:v=>v+'%'},
+          afterDataLimits: axis => { axis.max = Math.max(axis.max, 50); }
+        }
+      }
+    }
+  });
+
+  // ── Chart 4 : Simulation mensualité personnalisée ──────────
+  const capital = parseFloat(document.getElementById('sim-capital').value) || 500000;
+  const duree = parseInt(document.getElementById('sim-duree').value) || 20;
+  const mensSimMois = moisKeys.map(k => Math.round(mensualiteCalc(capital, TAUX_MENSUELS[k], duree)));
+  const tauxVals = Object.values(TAUX_MENSUELS);
+
+  if (croiséCharts.simMens) croiséCharts.simMens.destroy();
+  croiséCharts.simMens = new Chart(document.getElementById('chartSimMensualite'), {
+    type: 'line',
+    data: {
+      labels: moisKeys,
+      datasets: [
+        {
+          label: `Mensualité (${fmtNum(capital/1000)}k€ / ${duree}ans)`,
+          data: mensSimMois,
+          borderColor: '#4a6741',
+          backgroundColor: 'rgba(74,103,65,0.1)',
+          borderWidth: 2.5, fill: true, tension: 0.35,
+          pointRadius: 1.5, pointBackgroundColor: '#4a6741',
+          yAxisID: 'yMensM'
+        },
+        {
+          label: 'Taux mensuel (%)',
+          data: tauxVals,
+          borderColor: '#b85c2a',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5, borderDash: [4,3], tension: 0.35,
+          pointRadius: 1, pointBackgroundColor: '#b85c2a',
+          yAxisID: 'yTauxM'
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { callbacks: {
+        label: ctx => ctx.dataset.yAxisID === 'yMensM' ? fmtNum(ctx.raw)+' €/mois' : ctx.raw.toFixed(2)+' %'
+      }}},
+      scales: {
+        x: { ...baseOpts.scales.x, ticks: { ...baseOpts.scales.x.ticks, maxTicksLimit: 12 } },
+        yMensM: { type:'linear', position:'left', grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10},color:'#4a6741',callback:v=>fmtNum(v)+'€'} },
+        yTauxM: { type:'linear', position:'right', min:0, max:5, grid:{drawOnChartArea:false}, ticks:{font:{family:'DM Mono',size:10},color:'#b85c2a',callback:v=>v.toFixed(1)+'%'} }
+      }
+    }
+  });
+
 // ========== GRAPHIQUES TAUX ==========
 let tauxChartsBuilt = false;
 
@@ -1838,6 +2295,8 @@ function buildTauxCharts() {
       }
     }
   });
+
+  buildCroiséCharts();
 
   // ── 4. Mensualité simulée 500k€ / 20 ans
   function mensualite(capital, tauxAnnuel, dureeAns) {
