@@ -940,9 +940,23 @@
   .ann-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.2rem; margin-bottom:2.5rem; }
   .ann-card { background:var(--card); border:1px solid var(--border); border-radius:3px; overflow:hidden; transition:box-shadow 0.2s, transform 0.2s; }
   .ann-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.1); transform:translateY(-2px); }
-  .ann-card-photo { width:100%; height:180px; overflow:hidden; background:var(--border); }
-  .ann-card-photo img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s ease; }
-  .ann-card:hover .ann-card-photo img { transform:scale(1.05); }
+  a.ann-card-link { text-decoration:none; color:inherit; display:block; cursor:pointer; }
+  a.ann-card-link:hover { box-shadow:0 8px 24px rgba(0,0,0,0.15); transform:translateY(-3px); }
+  a.ann-card-link:hover .ann-card-header { background:#1a1a17; }
+  .ann-card-ext { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-top:0.4rem; opacity:0; transition:opacity 0.2s; }
+  a.ann-card-link:hover .ann-card-ext { opacity:1; }
+  /* Carrousel */
+  .ann-carousel { position:relative; width:100%; height:200px; overflow:hidden; background:#1a1a17; }
+  .ann-carousel-track { display:flex; height:100%; transition:transform 0.4s ease; }
+  .ann-carousel-track img { min-width:100%; height:100%; object-fit:cover; flex-shrink:0; }
+  .ann-carousel-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.55); color:#fff; border:none; cursor:pointer; width:30px; height:30px; border-radius:50%; font-size:0.9rem; display:flex; align-items:center; justify-content:center; transition:background 0.2s; z-index:2; }
+  .ann-carousel-btn:hover { background:rgba(0,0,0,0.85); }
+  .ann-carousel-btn.prev { left:8px; }
+  .ann-carousel-btn.next { right:8px; }
+  .ann-carousel-counter { position:absolute; bottom:6px; right:8px; font-family:'DM Mono',monospace; font-size:0.6rem; background:rgba(0,0,0,0.6); color:#fff; padding:0.15rem 0.4rem; border-radius:3px; z-index:2; }
+  .ann-carousel-dots { position:absolute; bottom:6px; left:50%; transform:translateX(-50%); display:flex; gap:4px; z-index:2; }
+  .ann-carousel-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,0.45); transition:background 0.2s; cursor:pointer; }
+  .ann-carousel-dot.active { background:#c8a84b; }
   .ann-card-header { background:var(--ink); color:var(--cream); padding:0.9rem 1.1rem 0.7rem; position:relative; }
   .ann-card-prix { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
   .ann-card-pm2 { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--gold); margin-top:0.1rem; }
@@ -3400,22 +3414,38 @@ function buildPrevCharts() {
 let annChartsBuilt = false;
 
 const ANNONCES_DATA = [
-  { titre:"Demeure debut XXe - Parc royal",    prix:1750000, surface:430, terrain:2176, pieces:11, chambres:6, dpe:"E", agence:"L'Adresse Arbeau Marly",  photo:"https://photo.superimmo.com/j869niqdzuazvzztimbuorwf9y30" },
-  { titre:"Maison familiale - vue Paris",      prix:780000,  surface:146, terrain:1216, pieces:6,  chambres:4, dpe:"D", agence:"Etienne Petit",            photo:"https://photo.superimmo.com/v68ga4kz82pxg1ifh1uq16opuvtu" },
-  { titre:"Belle maison chaleureuse - gare",   prix:920000,  surface:139, terrain:450,  pieces:6,  chambres:4, dpe:"C", agence:"Rennes Immobilier",        photo:"https://photo.superimmo.com/ss8w3kpzqwzpv6rkxdf9ta16i02j" },
-  { titre:"Spacieuse - vue Paris / terrasse",  prix:780000,  surface:152, terrain:1216, pieces:7,  chambres:4, dpe:"D", agence:"BSK Immobilier",           photo:"https://photo.superimmo.com/vy6g6s8bhvt0sq9xtr1g4395jnr1" },
-  { titre:"Maison 4 pieces - proche gare",     prix:449000,  surface:105, terrain:0,    pieces:4,  chambres:3, dpe:"D", agence:"iad France",               photo:"https://photo.superimmo.com/oo5tlvlno2kkbpjcw27p57nazsj7" },
-  { titre:"Grandes Terres - exclusivite",      prix:945000,  surface:180, terrain:800,  pieces:7,  chambres:4, dpe:"D", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/o/e/a/6609adc9-e4a9-4ca1-8947-33cd1bec4b75_ptw0.jpeg" },
-  { titre:"Rue privee - calme absolu",         prix:759000,  surface:150, terrain:600,  pieces:6,  chambres:4, dpe:"D", agence:"Foncia",                   photo:"https://storage.etreproprio.com/classified/image/thumb/a/b/a/e61adbd2-a034-49a0-9e62-d4993dd15f71_ptw0.jpeg" },
-  { titre:"Triangle d'or - triple sejour",    prix:1050000, surface:233, terrain:900,  pieces:8,  chambres:6, dpe:"E", agence:"Stephane Plaza",           photo:"https://storage.etreproprio.com/classified/image/thumb/z/f/e/743eb814-9875-4756-9b9d-00b8d479e69e_ptw0.jpeg" },
-  { titre:"Maison 92m2 - jardin et garage",    prix:499000,  surface:92,  terrain:305,  pieces:4,  chambres:3, dpe:"D", agence:"Stephane Plaza",           photo:"https://storage.etreproprio.com/classified/image/thumb/u/t/u/45f526f7-bf20-41f1-bcf0-72fe5a8b9ddb_ptw0.jpeg" },
-  { titre:"Propriete Louveciennes limite",     prix:1490000, surface:289, terrain:1200, pieces:9,  chambres:6, dpe:"E", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/j/g/j/e8c12f64-ef24-46ed-86f3-bb404ef1fc70_ptw0.jpeg" },
-  { titre:"Coup de coeur - proche village",    prix:449000,  surface:90,  terrain:200,  pieces:4,  chambres:3, dpe:"E", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/h/w/f/c0331a94-4959-4c6e-8601-b719205b0439_ptw0.jpeg" },
-  { titre:"Domaine des Ombrages - 966m2",      prix:1695000, surface:250, terrain:966,  pieces:9,  chambres:6, dpe:"D", agence:"Immoperf",                 photo:"https://storage.etreproprio.com/classified/image/thumb/r/g/q/58e7de99-2ff8-4e8c-a2f4-ead516027d6b_ptw0.jpeg" },
-  { titre:"Ombrages 100m2 - jardin",           prix:780000,  surface:100, terrain:400,  pieces:5,  chambres:3, dpe:"C", agence:"iad France",               photo:"https://storage.etreproprio.com/classified/image/thumb/o/e/a/6609adc9-e4a9-4ca1-8947-33cd1bec4b75_ptw0.jpeg" },
-  { titre:"Maison de ville - Quartier Village",prix:595000,  surface:121, terrain:0,    pieces:5,  chambres:3, dpe:"C", agence:"Keller Williams",          photo:"https://storage.etreproprio.com/classified/image/thumb/k/z/o/ed6fc731-ddf0-4384-b87b-5fcfdab83d99_ptw0.jpeg" },
-  { titre:"L'Etang-la-Ville - charme ancien", prix:1050000, surface:200, terrain:800,  pieces:7,  chambres:5, dpe:"D", agence:"AVLMA",                    photo:"https://storage.etreproprio.com/classified/image/thumb/v/o/z/ce12947f-2670-4ba0-ad7a-162d43fc0668_ptw0.jpeg" },
-  { titre:"L'Etang-la-Ville - village calme", prix:920000,  surface:180, terrain:700,  pieces:7,  chambres:4, dpe:"D", agence:"AVLMA",                    photo:"https://storage.etreproprio.com/classified/image/thumb/n/d/l/a4a0b1e2-d840-409b-848a-ff98ebb06805_ptw0.jpeg" },
+  { titre:"Demeure debut XXe - Parc royal",    prix:1750000, surface:430, terrain:2176, pieces:11, chambres:6, dpe:"E", agence:"L'Adresse Arbeau Marly",  url:"https://www.superimmo.com/annonces/achat-maison-430m-marly-le-roi-78160-x10ft9h",
+    photos:["https://photo.superimmo.com/j869niqdzuazvzztimbuorwf9y30"] },
+  { titre:"Maison familiale - vue Paris",      prix:780000,  surface:146, terrain:1216, pieces:6,  chambres:4, dpe:"D", agence:"Etienne Petit",            url:"https://www.superimmo.com/annonces/achat-maison-146m-marly-le-roi-78160-x10ev3i",
+    photos:["https://photo.superimmo.com/v68ga4kz82pxg1ifh1uq16opuvtu"] },
+  { titre:"Belle maison chaleureuse - gare",   prix:920000,  surface:139, terrain:450,  pieces:6,  chambres:4, dpe:"C", agence:"Rennes Immobilier",        url:"https://www.superimmo.com/annonces/achat-maison-139m-marly-le-roi-78160-xzzlky",
+    photos:["https://photo.superimmo.com/ss8w3kpzqwzpv6rkxdf9ta16i02j"] },
+  { titre:"Spacieuse - vue Paris / terrasse",  prix:780000,  surface:152, terrain:1216, pieces:7,  chambres:4, dpe:"D", agence:"BSK Immobilier",           url:"https://www.superimmo.com/annonces/achat-maison-152m-marly-le-roi-78160-x104bq6",
+    photos:["https://photo.superimmo.com/vy6g6s8bhvt0sq9xtr1g4395jnr1"] },
+  { titre:"Maison 4 pieces - proche gare",     prix:449000,  surface:105, terrain:0,    pieces:4,  chambres:3, dpe:"D", agence:"iad France",               url:"https://www.superimmo.com/annonces/achat-maison-105m-marly-le-roi-78160-x10cl6g",
+    photos:["https://photo.superimmo.com/oo5tlvlno2kkbpjcw27p57nazsj7"] },
+  { titre:"Grandes Terres - exclusivite",      prix:945000,  surface:180, terrain:800,  pieces:7,  chambres:4, dpe:"D", agence:"Maisons de Famille",       url:"https://www.etreproprio.com/immobilier-24737394-vente-herve-maison-a-vendre-a-marly-le-roi-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/o/t/e/03d2f8ad-4e5b-49a5-aa24-904a55e4eba4_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/p/z/o/2257fabb-000a-454e-936a-b1a3a7335667_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/v/r/g/1c2b7eeb-cad0-4afb-8ae2-7e018dd8daa2_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/s/i/e/b74af4e5-6b56-464e-ab35-d458450f2517_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/y/o/i/025678f2-cf66-4d95-b61f-b2ed956e2d19_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/t/e/587d73e1-ab72-4543-a14c-0fe26f1498a7_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/p/b/a/8c7782ba-74fc-4dc7-9487-e689d73a8120_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/p/i/m/2a7622d1-fbc4-43f6-b0d0-366bb15071af_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/k/c/t/e557fa61-d57c-4cc0-8bb4-1aecc288468b_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/f/k/z/25403aff-a3c5-419c-bac7-0fc27ebfab57_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/b/r/k/c164f5bd-3249-4b98-9f07-2996c7e285e3_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/g/b/j/8a067311-e83b-486d-b152-df164a1abe6a_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/g/m/w/41b098a4-8163-427a-81ec-5b4b53991cee_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/i/q/v/efed210b-8ee7-4e30-8482-cb3b6bf6185f_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/a/b/g/71d8fb1c-a542-49f3-9277-671b5987ae83_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/p/y/d/5f48d4ef-6690-4260-bced-25c8bfaca38d_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/y/a/da410da6-0a88-466e-aaf4-bc9a75b93781_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/t/j/t/2140864b-6a4a-414c-897f-b530aaf809e2_ptw0.jpeg"] },
+  { titre:"Rue privee - calme absolu",         prix:759000,  surface:150, terrain:600,  pieces:6,  chambres:4, dpe:"D", agence:"Foncia",                   url:"https://www.etreproprio.com/immobilier-24732768-vente-au-calme-et-proche-toutes-commodites-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/a/b/a/e61adbd2-a034-49a0-9e62-d4993dd15f71_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/v/m/0927b321-5592-449a-a1a8-c6aa3b60bf48_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/f/p/f/4e90de49-1988-4fab-a6b0-377c9f72b0f1_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/i/b/k/78a55c45-57d9-474f-ad24-b460d2e86cee_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/i/q/e/a036ca74-6d44-4efb-b261-c231d8445b75_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/f/x/v/ca8992f1-fa6c-4850-b26d-2400f0c377c2_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/v/m/w/81d62a85-9fa9-4e52-9f54-53e80240df68_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/p/p/o/7b5334b2-8cb7-44eb-b8f5-2cd405a52c63_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/l/s/b429cc27-5f2a-4c6b-ad1a-9ed629ebf292_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/l/n/t/9bcf30c7-5559-4da4-98f8-0ad6ac444a5f_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/c/h/a/82608ee9-fec4-4b74-89c1-4a4c8e7e584f_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/w/v/w/bcacabcd-0ba2-416a-a4cc-8564a3827d72_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/u/a/a/58f5caf2-dfe4-43b0-b4c7-03ba188a9284_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/i/r/v/a0e06157-5f64-454b-8305-f03b005f71e1_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/b/h/c/0da862b5-fc13-44e7-bfdc-853c6cc53578_ptw0.jpeg"] },
+  { titre:"Triangle d'or - triple sejour",    prix:1050000, surface:233, terrain:900,  pieces:8,  chambres:6, dpe:"E", agence:"Stephane Plaza",           url:"https://www.etreproprio.com/immobilier-24714881-vente-maison-individuelle-dans-le-triangle-d-or-de-marly-le-roi-dpe-e-triple-sejour-6-chambres-jardin-garage-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/z/f/e/743eb814-9875-4756-9b9d-00b8d479e69e_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/j/m/i/12e710d8-345c-4005-a917-9623bdefe3d8_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/u/r/z/e60392d8-95fe-4979-8566-d6e4da6e232f_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/o/i/e/b1f7aa5f-88aa-401f-871c-1956a4200784_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/j/e/d/00f4608c-1a51-4b48-8997-f4d6c85f66a8_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/c/v/e/85544e5a-1d88-406c-9a55-9469d326cc7e_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/f/i/b/1d9c8d76-18de-44bd-926f-1972f618bd3a_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/n/a/ec89f4eb-37ea-4cfb-bc17-5c6994e3dded_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/m/a/r/0019e631-afce-41da-a15a-8a1ee00e7642_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/x/z/a/1933c6e8-7496-4545-a5a7-29193033b5e9_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/k/a/y/a5edaca4-e3e1-4b41-99ac-770d91f0ef72_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/z/y/w/790cab07-583b-4d69-95f7-59f04a97a54c_ptw0.jpeg","https://storage.etreproprio.com/classified/image/thumb/k/l/w/fa5617f5-ac01-4203-80d8-6556a2a8ac13_ptw0.jpeg"] },
+  { titre:"Maison 92m2 - jardin et garage",    prix:499000,  surface:92,  terrain:305,  pieces:4,  chambres:3, dpe:"D", agence:"Stephane Plaza",           url:"https://www.etreproprio.com/immobilier-24699363-vente-rare-maison-marly-le-roi-92m2-dpe-d-3-chambres-jardin-et-garage-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/u/t/u/45f526f7-bf20-41f1-bcf0-72fe5a8b9ddb_ptw0.jpeg"] },
+  { titre:"Propriete Louveciennes limite",     prix:1490000, surface:289, terrain:1200, pieces:9,  chambres:6, dpe:"E", agence:"Maisons de Famille",       url:"https://www.etreproprio.com/immobilier-24699199-vente-maison-louveciennes-9-pieces-289-m2-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/j/g/j/e8c12f64-ef24-46ed-86f3-bb404ef1fc70_ptw0.jpeg"] },
+  { titre:"Coup de coeur - proche village",    prix:449000,  surface:90,  terrain:200,  pieces:4,  chambres:3, dpe:"E", agence:"Maisons de Famille",       url:"https://www.etreproprio.com/immobilier-24633775-vente-capucin-maison-a-vendre-a-marly-le-roi-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/h/w/f/c0331a94-4959-4c6e-8601-b719205b0439_ptw0.jpeg"] },
+  { titre:"Domaine des Ombrages - 966m2",      prix:1695000, surface:250, terrain:966,  pieces:9,  chambres:6, dpe:"D", agence:"Immoperf",                 url:"https://www.etreproprio.com/immobilier-24625202-vente-maison-marly-le-roi-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/r/g/q/58e7de99-2ff8-4e8c-a2f4-ead516027d6b_ptw0.jpeg"] },
+  { titre:"Ombrages 100m2 - jardin",           prix:780000,  surface:100, terrain:400,  pieces:5,  chambres:3, dpe:"C", agence:"iad France",               url:"https://www.etreproprio.com/immobilier-24614763-vente-maison-100-m-a-marly-le-roi-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/o/e/a/6609adc9-e4a9-4ca1-8947-33cd1bec4b75_ptw0.jpeg"] },
+  { titre:"Maison de ville - Quartier Village",prix:595000,  surface:121, terrain:0,    pieces:5,  chambres:3, dpe:"C", agence:"Keller Williams",          url:"https://www.etreproprio.com/immobilier-24616761-vente-maison-de-ville-quartier-du-village-marly-le-roi-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/k/z/o/ed6fc731-ddf0-4384-b87b-5fcfdab83d99_ptw0.jpeg"] },
+  { titre:"L'Etang-la-Ville - charme ancien", prix:1050000, surface:200, terrain:800,  pieces:7,  chambres:5, dpe:"D", agence:"AVLMA",                    url:"https://www.etreproprio.com/immobilier-24585600-vente-maison-familiale-au-coeur-du-village-de-l-etang-la-ville-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/v/o/z/ce12947f-2670-4ba0-ad7a-162d43fc0668_ptw0.jpeg"] },
+  { titre:"L'Etang-la-Ville - village calme", prix:920000,  surface:180, terrain:700,  pieces:7,  chambres:4, dpe:"D", agence:"AVLMA",                    url:"https://www.etreproprio.com/immobilier-24571366-vente-maison-familiale-en-plein-coeur-du-village-de-l-etang-la-ville-marly-le-roi",
+    photos:["https://storage.etreproprio.com/classified/image/thumb/n/d/l/a4a0b1e2-d840-409b-848a-ff98ebb06805_ptw0.jpeg"] },
 ].map(a => ({ ...a, pm2: Math.round(a.prix / a.surface) }));
 
 let annFiltered = [...ANNONCES_DATA];
@@ -3431,18 +3461,33 @@ function renderAnnCards() {
   const grid = document.getElementById('ann-grid');
   const count = document.getElementById('ann-count');
   count.textContent = annFiltered.length + ' annonce' + (annFiltered.length > 1 ? 's' : '') + ' affichee' + (annFiltered.length > 1 ? 's' : '');
-  grid.innerHTML = annFiltered.map(a => {
+  grid.innerHTML = annFiltered.map((a, idx) => {
     const terr = a.terrain > 0 ? `<span class="ann-card-spec">&#127807; <strong>${fmtNum(a.terrain)}m&sup2;</strong> terrain</span>` : '';
-    const photoHtml = a.photo
-      ? `<div class="ann-card-photo"><img src="${a.photo}" alt="${a.titre}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
-      : '';
+    const photos = a.photos || [];
+    const hasMany = photos.length > 1;
+
+    const carouselHtml = photos.length === 0 ? '' : `
+      <div class="ann-carousel" id="carousel-${idx}">
+        <div class="ann-carousel-track" id="track-${idx}">
+          ${photos.map(p => `<img src="${p}" alt="${a.titre}" loading="lazy" onerror="this.style.display='none'">`).join('')}
+        </div>
+        ${hasMany ? `
+          <button class="ann-carousel-btn prev" onclick="carouselMove(event,${idx},-1)">&#8249;</button>
+          <button class="ann-carousel-btn next" onclick="carouselMove(event,${idx},1)">&#8250;</button>
+          <div class="ann-carousel-counter" id="counter-${idx}">1/${photos.length}</div>
+          <div class="ann-carousel-dots" id="dots-${idx}">
+            ${photos.map((_,i) => `<div class="ann-carousel-dot${i===0?' active':''}" onclick="carouselGoto(event,${idx},${i})"></div>`).join('')}
+          </div>` : ''}
+      </div>`;
+
     return `
     <div class="ann-card">
-      ${photoHtml}
-      <div class="ann-card-header">
+      ${carouselHtml}
+      <div class="ann-card-header" style="cursor:${a.url?'pointer':'default'}" ${a.url?`onclick="window.open('${a.url}','_blank')"`:''}>
         <div class="ann-card-prix">${fmtPrice(a.prix)}</div>
         <div class="ann-card-pm2">${fmtNum(a.pm2)} &euro;/m&sup2;</div>
         <div class="ann-card-dpe dpe-${a.dpe.toLowerCase()}">${a.dpe}</div>
+        ${a.url ? '<div class="ann-card-ext">&#10132; Voir l\'annonce</div>' : ''}
       </div>
       <div class="ann-card-body">
         <div class="ann-card-titre">${a.titre}</div>
@@ -3455,6 +3500,9 @@ function renderAnnCards() {
       </div>
     </div>`;
   }).join('');
+
+  // Init état carrousels
+  carouselState = {};
 }
 
 function filterAnn(type, btn) {
@@ -3474,6 +3522,37 @@ function sortAnn(val) {
   const dir = parts[1];
   annFiltered.sort((a,b) => dir === 'asc' ? a[key]-b[key] : b[key]-a[key]);
   renderAnnCards();
+}
+
+// ── Carrousel ──
+let carouselState = {};
+
+function carouselMove(e, idx, dir) {
+  e.preventDefault(); e.stopPropagation();
+  const track = document.getElementById('track-' + idx);
+  if (!track) return;
+  const total = track.children.length;
+  if (!carouselState[idx]) carouselState[idx] = 0;
+  carouselState[idx] = (carouselState[idx] + dir + total) % total;
+  updateCarousel(idx, total);
+}
+
+function carouselGoto(e, idx, pos) {
+  e.preventDefault(); e.stopPropagation();
+  const track = document.getElementById('track-' + idx);
+  if (!track) return;
+  carouselState[idx] = pos;
+  updateCarousel(idx, track.children.length);
+}
+
+function updateCarousel(idx, total) {
+  const pos = carouselState[idx] || 0;
+  const track = document.getElementById('track-' + idx);
+  if (track) track.style.transform = `translateX(-${pos * 100}%)`;
+  const counter = document.getElementById('counter-' + idx);
+  if (counter) counter.textContent = (pos+1) + '/' + total;
+  const dots = document.getElementById('dots-' + idx);
+  if (dots) dots.querySelectorAll('.ann-carousel-dot').forEach((d,i) => d.classList.toggle('active', i===pos));
 }
 
 function buildAnnComparCharts() {
