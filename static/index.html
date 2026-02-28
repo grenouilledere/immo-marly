@@ -70,6 +70,38 @@
     position: relative;
     z-index: 1;
   }
+  .header-photo {
+    flex-shrink: 0;
+    width: 220px;
+    height: 150px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid rgba(200,168,75,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .header-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.92) saturate(1.05);
+    transition: transform 0.4s ease;
+  }
+  .header-photo:hover img { transform: scale(1.04); }
+  .header-photo-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.65));
+    color: rgba(255,255,255,0.85);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.6rem 0.35rem;
+  }
+  @media(max-width:768px){ .header-photo { display: none; } }
   .header-title h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.8rem, 4vw, 3rem);
@@ -886,6 +918,65 @@
   }
 
 
+
+  /* ===== ANNONCES EN VENTE ===== */
+  .ann-header { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
+  .ann-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.2rem; }
+  .ann-sub { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--warm-gray); text-transform:uppercase; letter-spacing:0.05em; }
+  .ann-badge { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.07em; background:var(--gold); color:var(--ink); padding:0.35rem 0.9rem; border-radius:2px; }
+
+  /* Filtres */
+  .ann-filters { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.5rem; align-items:center; }
+  .ann-filter-label { font-family:'DM Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--warm-gray); margin-right:0.3rem; }
+  .ann-filter-btn { font-family:'DM Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.35rem 0.85rem; border:1.5px solid var(--border); background:var(--card); border-radius:2px; cursor:pointer; transition:all 0.15s; }
+  .ann-filter-btn:hover { border-color:var(--ink); }
+  .ann-filter-btn.active { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+  .ann-sort { font-family:'DM Mono',monospace; font-size:0.68rem; padding:0.35rem 0.6rem; border:1.5px solid var(--border); background:var(--card); border-radius:2px; cursor:pointer; margin-left:auto; }
+
+  /* Grille cartes */
+  .ann-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.2rem; margin-bottom:2.5rem; }
+  .ann-card { background:var(--card); border:1px solid var(--border); border-radius:3px; overflow:hidden; transition:box-shadow 0.2s, transform 0.2s; }
+  .ann-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.1); transform:translateY(-2px); }
+  .ann-card-header { background:var(--ink); color:var(--cream); padding:0.9rem 1.1rem 0.7rem; position:relative; }
+  .ann-card-prix { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
+  .ann-card-pm2 { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--gold); margin-top:0.1rem; }
+  .ann-card-dpe { position:absolute; top:0.8rem; right:0.9rem; font-family:'DM Mono',monospace; font-size:0.65rem; font-weight:700; width:22px; height:22px; border-radius:2px; display:flex; align-items:center; justify-content:center; }
+  .dpe-a,.dpe-b { background:#2e7d32; color:#fff; }
+  .dpe-c { background:#8bc34a; color:#fff; }
+  .dpe-d { background:#ffc107; color:#333; }
+  .dpe-e { background:#ff9800; color:#fff; }
+  .dpe-f,.dpe-g { background:#c62828; color:#fff; }
+  .ann-card-body { padding:0.9rem 1.1rem; }
+  .ann-card-titre { font-size:0.85rem; font-weight:600; margin-bottom:0.7rem; line-height:1.4; }
+  .ann-card-specs { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+  .ann-card-spec { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--warm-gray); }
+  .ann-card-spec strong { color:var(--ink); }
+  .ann-card-agence { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--warm-gray); border-top:1px solid var(--border); padding-top:0.55rem; margin-top:0.55rem; }
+
+  /* Bandeau comparatif */
+  .ann-vs-box { background:var(--ink); color:var(--cream); border-radius:4px; padding:1.5rem 2rem; margin-bottom:2rem; }
+  .ann-vs-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); margin-bottom:1.2rem; }
+  .ann-vs-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.2rem; }
+  .ann-vs-kpi { border-left:2px solid rgba(200,168,75,0.4); padding-left:1rem; }
+  .ann-vs-kpi .label { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:rgba(255,255,255,0.5); margin-bottom:0.35rem; }
+  .ann-vs-kpi .val { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; }
+  .ann-vs-kpi .delta { font-family:'DM Mono',monospace; font-size:0.72rem; margin-top:0.15rem; }
+  .delta-pos { color:#81c784; }
+  .delta-neg { color:#e57373; }
+
+  /* Graphique comparatif */
+  .ann-charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem; }
+  @media(max-width:900px){ .ann-charts-grid{ grid-template-columns:1fr; } }
+  .chart-card.ann .chart-wrap { height:280px; }
+
+  /* Compteur résultats */
+  .ann-count { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--warm-gray); margin-bottom:1rem; }
+  @media(max-width:768px){
+    .ann-grid { grid-template-columns:1fr; }
+    .ann-vs-grid { grid-template-columns:1fr 1fr; }
+    .ann-filters { gap:0.4rem; }
+  }
+
 </style>
 </head>
 <body>
@@ -895,6 +986,12 @@
     <div class="header-title">
       <h1>Marché des <span>Maisons</span><br>Marly-le-Roi</h1>
       <p>Yvelines (78160) · Île-de-France · Données DVF + Estimations</p>
+    </div>
+    <div class="header-photo">
+      <img src="https://www.bellespierre.fr/media/annonces/marly-le-roi/maisons-villas-proprietes-a-vendre-marly-le-roi.jpg"
+           alt="Maison à Marly-le-Roi"
+           onerror="this.parentElement.style.display='none'">
+      <div class="header-photo-caption">Marly-le-Roi · 78160</div>
     </div>
     <div class="header-badge">Données DVF 2014–2025 · Moyennes IQR</div>
   </div>
@@ -941,6 +1038,7 @@
     <button class="tab" onclick="showPanel('carte')">Carte</button>
     <button class="tab" onclick="showPanel('taux')">Taux & Prix</button>
     <button class="tab" onclick="showPanel('previsions')">Prévisions</button>
+    <button class="tab" onclick="showPanel('annonces')">Annonces 2026</button>
     <button class="tab" onclick="showPanel('analyse')">Analyse IA</button>
   </div>
 
@@ -949,7 +1047,7 @@
     <div class="charts-grid">
       <div class="chart-card">
         <h3>Prix de vente moyen annuel</h3>
-        <div class="subtitle">Maisons · Marly-le-Roi · 2014–2025 · Moyenne IQR (ventes atypiques exclues)</div>
+        <div class="subtitle">Prix moyen & surface moyenne · Marly-le-Roi · 2014–2025 · <em style="color:var(--warm-gray)">Moy. IQR — ventes atypiques exclues</em></div>
         <div class="chart-wrap"><canvas id="chartPrix"></canvas></div>
       </div>
       <div class="chart-card">
@@ -1319,6 +1417,85 @@
   </div>
 
 
+  <!-- PANEL ANNONCES -->
+  <div class="panel" id="panel-annonces">
+
+    <div class="ann-header">
+      <div>
+        <h2 class="ann-title">Annonces en vente — Février 2026</h2>
+        <div class="ann-sub">16 maisons · Marly-le-Roi 78160 · Sources : Superimmo · EtreProprio</div>
+      </div>
+      <div class="ann-badge">🔴 Live marché</div>
+    </div>
+
+    <!-- Comparatif vs DVF -->
+    <div class="ann-vs-box">
+      <div class="ann-vs-title">📊 Annonces 2026 vs prix réels DVF 2024</div>
+      <div class="ann-vs-grid">
+        <div class="ann-vs-kpi">
+          <div class="label">Prix moy. demandé 2026</div>
+          <div class="val">932 k€</div>
+          <div class="delta delta-pos">+26% vs DVF 2024 (737k€)</div>
+        </div>
+        <div class="ann-vs-kpi">
+          <div class="label">€/m² moyen demandé</div>
+          <div class="val" id="ann-pm2-moy">5 355 €/m²</div>
+          <div class="delta delta-neg">−5% vs DVF 2024 (5 641€)</div>
+        </div>
+        <div class="ann-vs-kpi">
+          <div class="label">Surface moyenne</div>
+          <div class="val">199 m²</div>
+          <div class="delta" style="color:rgba(255,255,255,0.5)">vs 143m² moyen DVF 2024</div>
+        </div>
+        <div class="ann-vs-kpi">
+          <div class="label">Décote négociation estimée</div>
+          <div class="val">−5 à −10%</div>
+          <div class="delta" style="color:rgba(255,255,255,0.5)">Marché actuel peu tendu</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphiques comparatifs -->
+    <div class="ann-charts-grid">
+      <div class="chart-card ann">
+        <h3>Distribution des prix demandés</h3>
+        <div class="subtitle">Annonces fév. 2026 vs transactions DVF réelles 2024</div>
+        <div class="chart-wrap"><canvas id="chartAnnPrix"></canvas></div>
+      </div>
+      <div class="chart-card ann">
+        <h3>Prix au m² : annonces vs DVF</h3>
+        <div class="subtitle">Comparaison par tranche de surface</div>
+        <div class="chart-wrap"><canvas id="chartAnnPm2"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="ann-filters">
+      <span class="ann-filter-label">Filtrer :</span>
+      <button class="ann-filter-btn active" onclick="filterAnn('tous',this)">Tous (16)</button>
+      <button class="ann-filter-btn" onclick="filterAnn('petit',this)">&lt; 600k€</button>
+      <button class="ann-filter-btn" onclick="filterAnn('moyen',this)">600k–1M€</button>
+      <button class="ann-filter-btn" onclick="filterAnn('grand',this)">&gt; 1M€</button>
+      <button class="ann-filter-btn" onclick="filterAnn('dpebc',this)">DPE A/B/C</button>
+      <select class="ann-sort" onchange="sortAnn(this.value)">
+        <option value="prix-asc">Trier : Prix ↑</option>
+        <option value="prix-desc">Prix ↓</option>
+        <option value="pm2-asc">€/m² ↑</option>
+        <option value="pm2-desc">€/m² ↓</option>
+        <option value="surface-desc">Surface ↓</option>
+      </select>
+    </div>
+    <div class="ann-count" id="ann-count">16 annonces affichées</div>
+
+    <!-- Grille cartes -->
+    <div class="ann-grid" id="ann-grid"></div>
+
+    <div class="source-notice">
+      <span>📋</span>
+      <div>Sources : <strong>Superimmo.com</strong> & <strong>EtreProprio.com</strong> · Données collectées en février 2026 · 16 annonces de maisons à Marly-le-Roi (78160) · Prix affichés = prix demandés, non les prix de vente réels · La décote de négociation est estimée à 5–10% dans le contexte de marché actuel.</div>
+    </div>
+  </div>
+
   <!-- PANEL CARTE -->
   <div class="panel" id="panel-carte">
     <div class="map-container">
@@ -1496,6 +1673,9 @@ function showPanel(id) {
   }
   if (id === 'previsions') {
     setTimeout(() => buildPrevCharts(), 50);
+  }
+  if (id === 'annonces') {
+    setTimeout(() => buildAnnCharts(), 50);
   }
   if (id === 'carte') {
     setTimeout(() => {
@@ -1771,33 +1951,59 @@ function buildCharts() {
     animation: { duration: 800, easing: 'easeInOutQuart' }
   };
 
-  // Chart Prix moyen
+  // Chart Prix moyen + Surface moyenne (double axe)
+  const surfData = years.map(y => annualStats[y]?.surfMoy || null);
   if (chartInstances.prix) chartInstances.prix.destroy();
   chartInstances.prix = new Chart(document.getElementById('chartPrix'), {
     type: 'line',
     data: {
       labels: years,
-      datasets: [{
-        data: prixData,
-        borderColor: '#c8a84b',
-        backgroundColor: 'rgba(200,168,75,0.1)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: '#c8a84b',
-        pointBorderColor: '#c8a84b',
-        pointBorderWidth: 0,
-        fill: true, tension: 0.3,
-
-      }]
+      datasets: [
+        {
+          label: 'Prix moyen',
+          data: prixData,
+          borderColor: '#c8a84b',
+          backgroundColor: 'rgba(200,168,75,0.08)',
+          borderWidth: 2.5, pointRadius: 5,
+          pointBackgroundColor: '#c8a84b',
+          fill: true, tension: 0.3,
+          yAxisID: 'yPrix'
+        },
+        {
+          label: 'Surface moy. (m²)',
+          data: surfData,
+          borderColor: '#4a6741',
+          backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [5, 3],
+          pointRadius: 4, pointBackgroundColor: '#4a6741',
+          tension: 0.3,
+          yAxisID: 'ySurf'
+        }
+      ]
     },
-    options: { ...baseOpts, plugins: { ...baseOpts.plugins, tooltip: { callbacks: {
-      label: ctx => {
-        const y = years[ctx.dataIndex];
-        const src = annualStats[y]?.source;
-        return fmtPrice(ctx.raw);
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins,
+        legend: { display: true, labels: { font: { family: 'DM Mono', size: 10 }, color: '#0f0e0b', boxWidth: 14 } },
+        tooltip: { callbacks: {
+          label: ctx => ctx.dataset.yAxisID === 'yPrix'
+            ? fmtPrice(ctx.raw)
+            : (ctx.raw ? ctx.raw + ' m²' : '—')
+        }}
+      },
+      scales: {
+        x: baseOpts.scales.x,
+        yPrix: {
+          type: 'linear', position: 'left',
+          grid: { color: '#e8e0d0' },
+          ticks: { font: { family: 'DM Mono', size: 10 }, color: '#c8a84b', callback: v => Math.round(v/1000)+'k€' }
+        },
+        ySurf: {
+          type: 'linear', position: 'right',
+          grid: { drawOnChartArea: false },
+          min: 80, max: 260,
+          ticks: { font: { family: 'DM Mono', size: 10 }, color: '#4a6741', callback: v => v+' m²' }
+        }
       }
-    }}},
-    scales: { ...baseOpts.scales, y: { ...baseOpts.scales.y, ticks: { ...baseOpts.scales.y.ticks, callback: v => fmtNum(v/1000)+'k €' } } }
     }
   });
 
@@ -2848,6 +3054,147 @@ function buildPrevCharts() {
       <td class="up">+${dp}%</td>
     </tr>`;
   }).join('');
+}
+
+
+// ========== ANNONCES EN VENTE ==========
+let annChartsBuilt = false;
+
+const ANNONCES_DATA = [
+  { titre:"Demeure debut XXe - Parc royal",    prix:1750000, surface:430, terrain:2176, pieces:11, chambres:6, dpe:"E", agence:"L'Adresse Arbeau Marly" },
+  { titre:"Maison familiale - vue Paris",      prix:780000,  surface:146, terrain:1216, pieces:6,  chambres:4, dpe:"D", agence:"Etienne Petit" },
+  { titre:"Belle maison chaleureuse - gare",   prix:920000,  surface:139, terrain:450,  pieces:6,  chambres:4, dpe:"C", agence:"Rennes Immobilier" },
+  { titre:"Spacieuse - vue Paris / terrasse",  prix:780000,  surface:152, terrain:1216, pieces:7,  chambres:4, dpe:"D", agence:"BSK Immobilier" },
+  { titre:"Maison 4 pieces - proche gare",     prix:449000,  surface:105, terrain:0,    pieces:4,  chambres:3, dpe:"D", agence:"iad France" },
+  { titre:"Grandes Terres - exclusivite",      prix:945000,  surface:180, terrain:800,  pieces:7,  chambres:4, dpe:"D", agence:"Maisons de Famille" },
+  { titre:"Rue privee - calme absolu",         prix:759000,  surface:150, terrain:600,  pieces:6,  chambres:4, dpe:"D", agence:"Foncia" },
+  { titre:"Triangle d'or - triple sejour",    prix:1050000, surface:233, terrain:900,  pieces:8,  chambres:6, dpe:"E", agence:"Stephane Plaza" },
+  { titre:"Maison 92m2 - jardin et garage",    prix:499000,  surface:92,  terrain:305,  pieces:4,  chambres:3, dpe:"D", agence:"Stephane Plaza" },
+  { titre:"Propriete Louveciennes limite",     prix:1490000, surface:289, terrain:1200, pieces:9,  chambres:6, dpe:"E", agence:"Maisons de Famille" },
+  { titre:"Coup de coeur - proche village",    prix:449000,  surface:90,  terrain:200,  pieces:4,  chambres:3, dpe:"E", agence:"Maisons de Famille" },
+  { titre:"Domaine des Ombrages - 966m2",      prix:1695000, surface:250, terrain:966,  pieces:9,  chambres:6, dpe:"D", agence:"Immoperf" },
+  { titre:"Ombrages 100m2 - jardin",           prix:780000,  surface:100, terrain:400,  pieces:5,  chambres:3, dpe:"C", agence:"iad France" },
+  { titre:"Maison de ville - Quartier Village",prix:595000,  surface:121, terrain:0,    pieces:5,  chambres:3, dpe:"C", agence:"Keller Williams" },
+  { titre:"L'Etang-la-Ville - charme ancien", prix:1050000, surface:200, terrain:800,  pieces:7,  chambres:5, dpe:"D", agence:"AVLMA" },
+  { titre:"L'Etang-la-Ville - village calme", prix:920000,  surface:180, terrain:700,  pieces:7,  chambres:4, dpe:"D", agence:"AVLMA" },
+].map(a => ({ ...a, pm2: Math.round(a.prix / a.surface) }));
+
+let annFiltered = [...ANNONCES_DATA];
+
+function buildAnnCharts() {
+  if (annChartsBuilt) return;
+  annChartsBuilt = true;
+  renderAnnCards();
+  buildAnnComparCharts();
+}
+
+function renderAnnCards() {
+  const grid = document.getElementById('ann-grid');
+  const count = document.getElementById('ann-count');
+  count.textContent = annFiltered.length + ' annonce' + (annFiltered.length > 1 ? 's' : '') + ' affichee' + (annFiltered.length > 1 ? 's' : '');
+  grid.innerHTML = annFiltered.map(a => {
+    const terr = a.terrain > 0 ? `<span class="ann-card-spec">&#127807; <strong>${fmtNum(a.terrain)}m&sup2;</strong> terrain</span>` : '';
+    return `
+    <div class="ann-card">
+      <div class="ann-card-header">
+        <div class="ann-card-prix">${fmtPrice(a.prix)}</div>
+        <div class="ann-card-pm2">${fmtNum(a.pm2)} &euro;/m&sup2;</div>
+        <div class="ann-card-dpe dpe-${a.dpe.toLowerCase()}">${a.dpe}</div>
+      </div>
+      <div class="ann-card-body">
+        <div class="ann-card-titre">${a.titre}</div>
+        <div class="ann-card-specs">
+          <span class="ann-card-spec">&#128207; <strong>${a.surface}m&sup2;</strong></span>
+          <span class="ann-card-spec">&#127968; <strong>${a.pieces}p</strong> / ${a.chambres}ch</span>
+          ${terr}
+        </div>
+        <div class="ann-card-agence">${a.agence}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterAnn(type, btn) {
+  document.querySelectorAll('.ann-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (type === 'tous')  annFiltered = [...ANNONCES_DATA];
+  else if (type === 'petit')  annFiltered = ANNONCES_DATA.filter(a => a.prix < 600000);
+  else if (type === 'moyen')  annFiltered = ANNONCES_DATA.filter(a => a.prix >= 600000 && a.prix <= 1000000);
+  else if (type === 'grand')  annFiltered = ANNONCES_DATA.filter(a => a.prix > 1000000);
+  else if (type === 'dpebc')  annFiltered = ANNONCES_DATA.filter(a => ['A','B','C'].includes(a.dpe));
+  renderAnnCards();
+}
+
+function sortAnn(val) {
+  const parts = val.split('-');
+  const key = parts[0] === 'pm2' ? 'pm2' : parts[0] === 'surface' ? 'surface' : 'prix';
+  const dir = parts[1];
+  annFiltered.sort((a,b) => dir === 'asc' ? a[key]-b[key] : b[key]-a[key]);
+  renderAnnCards();
+}
+
+function buildAnnComparCharts() {
+  const opts = {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 600 },
+    plugins: {
+      legend: { labels: { font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:14 } },
+      tooltip: { backgroundColor:'#0f0e0b', titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10} }
+    },
+    scales: {
+      x: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} },
+      y: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} }
+    }
+  };
+
+  const tranches = ['< 500k','500-750k','750k-1M','1M-1.5M','> 1.5M'];
+  const bornes = [0,500000,750000,1000000,1500000,Infinity];
+  const countAnn = tranches.map((_,i) => ANNONCES_DATA.filter(a => a.prix >= bornes[i] && a.prix < bornes[i+1]).length);
+  const dvf2024prix = [295,355,370,480,520,560,571,576,580,610,610,633,646,675,678,690,694,705,740,747,791,792,820,831,890,905,914,914,1030,1030,1141].map(v=>v*1000);
+  const countDvf = tranches.map((_,i) => dvf2024prix.filter(p => p >= bornes[i] && p < bornes[i+1]).length);
+
+  new Chart(document.getElementById('chartAnnPrix'), {
+    type: 'bar',
+    data: {
+      labels: tranches,
+      datasets: [
+        { label: 'Annonces fev. 2026', data: countAnn, backgroundColor:'rgba(200,168,75,0.75)', borderColor:'#c8a84b', borderWidth:1.5, borderRadius:2 },
+        { label: 'Ventes DVF 2024',    data: countDvf, backgroundColor:'rgba(15,14,11,0.65)',  borderColor:'#0f0e0b', borderWidth:1,   borderRadius:2 }
+      ]
+    },
+    options: { ...opts, plugins: { ...opts.plugins, tooltip: { ...opts.plugins.tooltip, callbacks: {
+      label: ctx => ctx.raw + ' bien' + (ctx.raw > 1 ? 's' : '') + '  ' + ctx.dataset.label
+    }}}}
+  });
+
+  const surfTranches = ['< 100m2','100-150m2','150-200m2','> 200m2'];
+  const surfBornes = [0,100,150,200,Infinity];
+  const pm2Ann = surfTranches.map((_,i) => {
+    const v = ANNONCES_DATA.filter(a => a.surface >= surfBornes[i] && a.surface < surfBornes[i+1]).map(a=>a.pm2);
+    return v.length ? Math.round(v.reduce((s,x)=>s+x,0)/v.length) : null;
+  });
+  const dvf24 = [{s:89,p:5393},{s:133,p:3910},{s:130,p:4308},{s:165,p:3462},{s:89,p:6854},{s:119,p:5126},{s:159,p:3983},{s:94,p:7181},{s:120,p:5649},{s:70,p:9854},{s:68,p:10199},{s:126,p:5599},{s:116,p:6377},{s:111,p:6726},{s:179,p:4419},{s:167,p:4741},{s:113,p:7257},{s:171,p:4860},{s:190,p:4684},{s:116,p:7802},{s:151,p:6053},{s:273,p:3349},{s:183,p:5628},{s:122,p:8443},{s:265,p:4307}];
+  const pm2Dvf = surfTranches.map((_,i) => {
+    const v = dvf24.filter(d => d.s >= surfBornes[i] && d.s < surfBornes[i+1]).map(d=>d.p);
+    return v.length ? Math.round(v.reduce((s,x)=>s+x,0)/v.length) : null;
+  });
+
+  new Chart(document.getElementById('chartAnnPm2'), {
+    type: 'bar',
+    data: {
+      labels: surfTranches,
+      datasets: [
+        { label: 'Annonces fev. 2026', data: pm2Ann, backgroundColor:'rgba(200,168,75,0.75)', borderColor:'#c8a84b', borderWidth:1.5, borderRadius:2 },
+        { label: 'DVF 2024 reel (IQR)', data: pm2Dvf, backgroundColor:'rgba(15,14,11,0.65)',  borderColor:'#0f0e0b', borderWidth:1,   borderRadius:2 }
+      ]
+    },
+    options: { ...opts,
+      plugins: { ...opts.plugins, tooltip: { ...opts.plugins.tooltip, callbacks: {
+        label: ctx => (ctx.raw ? fmtNum(ctx.raw)+' euro/m2' : '---') + '  ' + ctx.dataset.label
+      }}},
+      scales: { ...opts.scales, y: { ...opts.scales.y, ticks:{...opts.scales.y.ticks, callback: v => fmtNum(v)+'euro'} } }
+    }
+  });
 }
 
 // ========== CARTE ==========
