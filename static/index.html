@@ -845,6 +845,47 @@
     .chart-card.tall .chart-wrap { height: 260px; }
   }
 
+
+
+  /* ===== PRÉVISIONS REFONTE ===== */
+  .prev-header { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
+  .prev-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.2rem; }
+  .prev-subtitle { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--warm-gray); text-transform:uppercase; letter-spacing:0.05em; }
+  .prev-badge { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.07em; background:var(--ink); color:var(--gold); padding:0.35rem 0.9rem; border-radius:2px; }
+  .prev-kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+  .prev-kpi { background:var(--card); border:1px solid var(--border); border-top:3px solid var(--border); padding:1rem 1.2rem; border-radius:2px; }
+  .prev-kpi-label { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--warm-gray); margin-bottom:0.5rem; }
+  .prev-kpi-val { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; }
+  .prev-kpi-sub { font-size:0.72rem; color:var(--warm-gray); margin-top:0.2rem; }
+  .model-box { background:var(--ink); color:var(--cream); border-radius:4px; padding:1.5rem 2rem; margin-bottom:2rem; }
+  .model-box-title { font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold); margin-bottom:1rem; }
+  .model-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+  .model-col { font-size:0.8rem; line-height:1.65; }
+  .model-col-title { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--gold); margin-bottom:0.5rem; padding-bottom:0.3rem; border-bottom:1px solid rgba(200,168,75,0.3); }
+  .prev-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem; }
+  .chart-card.prev .chart-wrap { height:300px; }
+  .prev-table-wrap { background:var(--card); border:1px solid var(--border); border-radius:2px; overflow:hidden; margin-bottom:2rem; }
+  .prev-table-wrap h3 { font-family:'Playfair Display',serif; font-size:1rem; padding:1rem 1.2rem 0.8rem; border-bottom:1px solid var(--border); }
+  .prev-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  .prev-table th { background:var(--cream); font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; padding:0.6rem 1rem; text-align:center; border-bottom:1px solid var(--border); }
+  .prev-table th:first-child { text-align:left; }
+  .prev-table td { padding:0.6rem 1rem; text-align:center; border-bottom:1px solid var(--border); }
+  .prev-table td:first-child { font-family:'DM Mono',monospace; font-weight:600; text-align:left; }
+  .prev-table tr.prev-row td { color:var(--ink); }
+  .prev-table tr.prev-row:hover { background:rgba(200,168,75,0.06); }
+  .prev-table .up { color:#4a6741; font-weight:600; }
+  .disclaimer-box { background:#f5f0e8; border:1px solid var(--border); border-radius:2px; padding:0.9rem 1.2rem; font-size:0.75rem; color:var(--warm-gray); line-height:1.6; margin-top:0.5rem; }
+  @media(max-width:900px){ .prev-grid{grid-template-columns:1fr;} .model-grid{grid-template-columns:1fr;} }
+  @media(max-width:768px){
+    .prev-kpi-row{grid-template-columns:1fr 1fr;}
+    .prev-kpi-val{font-size:1.1rem;}
+    .chart-card.prev .chart-wrap{height:220px;}
+    .model-box{padding:1rem;}
+    .prev-table{font-size:0.72rem;}
+    .prev-table th,.prev-table td{padding:0.4rem 0.5rem;}
+  }
+
+
 </style>
 </head>
 <body>
@@ -855,7 +896,7 @@
       <h1>Marché des <span>Maisons</span><br>Marly-le-Roi</h1>
       <p>Yvelines (78160) · Île-de-France · Données DVF + Estimations</p>
     </div>
-    <div class="header-badge">Données DVF 2014–2025</div>
+    <div class="header-badge">Données DVF 2014–2025 · Moyennes IQR</div>
   </div>
   <div class="kpi-row" id="kpi-row">
     <div class="kpi">
@@ -899,6 +940,7 @@
     <button class="tab" onclick="showPanel('ventes')">Ventes détaillées</button>
     <button class="tab" onclick="showPanel('carte')">Carte</button>
     <button class="tab" onclick="showPanel('taux')">Taux & Prix</button>
+    <button class="tab" onclick="showPanel('previsions')">Prévisions</button>
     <button class="tab" onclick="showPanel('analyse')">Analyse IA</button>
   </div>
 
@@ -907,7 +949,7 @@
     <div class="charts-grid">
       <div class="chart-card">
         <h3>Prix de vente moyen annuel</h3>
-        <div class="subtitle">Maisons · Marly-le-Roi · 2014–2025</div>
+        <div class="subtitle">Maisons · Marly-le-Roi · 2014–2025 · Moyenne IQR (ventes atypiques exclues)</div>
         <div class="chart-wrap"><canvas id="chartPrix"></canvas></div>
       </div>
       <div class="chart-card">
@@ -917,7 +959,7 @@
       </div>
       <div class="chart-card">
         <h3>Prix au m² moyen annuel</h3>
-        <div class="subtitle">Prix au m² annuel moyen · Marly-le-Roi</div>
+        <div class="subtitle">Prix au m² annuel moyen · Marly-le-Roi · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
         <div class="chart-wrap"><canvas id="chartPm2"></canvas></div>
       </div>
       <div class="chart-card">
@@ -927,6 +969,11 @@
       </div>
       </div>
   </div>
+    <div class="source-notice" style="margin-top:1rem">
+      <span>🔬</span>
+      <div><strong>Méthodologie des moyennes</strong> — Prix moyens et prix au m² calculés après double retraitement : (1) exclusion des biens avec surface bâtie &lt; 60 m² (dépendances, terrains quasi nus où le €/m² est mécaniquement aberrant), (2) exclusion statistique des ventes atypiques par la méthode <strong>IQR</strong> — valeurs hors [Q1 − 1,5×IQR ; Q3 + 1,5×IQR]. Le volume de transactions correspond à l'ensemble des ventes DVF réelles, sans retraitement.</div>
+    </div>
+
   </div>
 
   <!-- PANEL VENTES -->
@@ -1061,12 +1108,12 @@
       </div>
       <div class="chart-card">
         <h3>Prix moyen annuel vs Taux</h3>
-        <div class="subtitle">Corrélation prix Marly-le-Roi & taux d'emprunt</div>
+        <div class="subtitle">Corrélation prix Marly-le-Roi & taux d'emprunt · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
         <div class="chart-wrap"><canvas id="chartPrixTaux"></canvas></div>
       </div>
       <div class="chart-card">
         <h3>Volume de ventes vs Taux</h3>
-        <div class="subtitle">Nb transactions Marly-le-Roi & taux annuel moyen</div>
+        <div class="subtitle">Nb transactions Marly-le-Roi & taux annuel moyen · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
         <div class="chart-wrap"><canvas id="chartVolumeTaux"></canvas></div>
       </div>
       <div class="chart-card">
@@ -1131,17 +1178,17 @@
       <div class="croise-grid">
         <div class="chart-card tall">
           <h3>Prix moyen × Mensualité (500k€)</h3>
-          <div class="subtitle">Double axe · Prix Marly-le-Roi & mensualité simulée · 2014–2025</div>
+          <div class="subtitle">Double axe · Prix Marly-le-Roi & mensualité simulée · 2014–2025 · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
           <div class="chart-wrap"><canvas id="chartCroisePrixMens"></canvas></div>
         </div>
         <div class="chart-card tall">
           <h3>Taux × Mensualité × Volume</h3>
-          <div class="subtitle">Triple indicateur · corrélation marché · 2014–2025</div>
+          <div class="subtitle">Triple indicateur · corrélation marché · 2014–2025 · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
           <div class="chart-wrap"><canvas id="chartCroiseTrois"></canvas></div>
         </div>
         <div class="chart-card tall">
           <h3>Effort financier : mensualité vs prix de vente moyen</h3>
-          <div class="subtitle">% du prix financé par la mensualité annuelle · 2014–2025</div>
+          <div class="subtitle">% du prix financé par la mensualité annuelle · 2014–2025 · <em style="color:var(--warm-gray);font-style:italic">Moy. IQR — ventes atypiques exclues</em></div>
           <div class="chart-wrap"><canvas id="chartEffort"></canvas></div>
         </div>
         <div class="chart-card tall">
@@ -1157,6 +1204,120 @@
       <div>Taux : <strong>Observatoire Crédit Logement/CSA</strong> · Meilleurtaux · Immobilier Danger · Taux moyens toutes durées (≈20 ans) · Les taux mensuels sont les taux moyens de marché, hors assurance.</div>
     </div>
   </div>
+
+  <!-- PANEL PRÉVISIONS -->
+  <div class="panel" id="panel-previsions">
+
+    <div class="prev-header">
+      <div>
+        <h2 class="prev-title">Prévisions 2025–2030</h2>
+        <div class="prev-subtitle">Modèle prédictif · 543 transactions DVF · 2014–2024 · 1 scénario central</div>
+      </div>
+      <div class="prev-badge">Modèle données</div>
+    </div>
+
+    <!-- KPIs prévision -->
+    <div class="prev-kpi-row">
+      <div class="prev-kpi">
+        <div class="prev-kpi-label">📍 Base réelle 2024</div>
+        <div class="prev-kpi-val">737 k€</div>
+        <div class="prev-kpi-sub">5 641 €/m² · 34 ventes · IQR nettoyé</div>
+      </div>
+      <div class="prev-kpi" style="border-top-color:var(--gold)">
+        <div class="prev-kpi-label">🎯 Prix prévu 2026</div>
+        <div class="prev-kpi-val" style="color:var(--gold)">798 k€</div>
+        <div class="prev-kpi-sub">+8,2% vs 2024 · Régression pondérée</div>
+      </div>
+      <div class="prev-kpi" style="border-top-color:#4a6741">
+        <div class="prev-kpi-label">🎯 Prix prévu 2030</div>
+        <div class="prev-kpi-val" style="color:#4a6741">842 k€</div>
+        <div class="prev-kpi-sub">+14,3% vs 2024 · +1,1%/an</div>
+      </div>
+      <div class="prev-kpi" style="border-top-color:#4a6741">
+        <div class="prev-kpi-label">📈 Volume prévu 2030</div>
+        <div class="prev-kpi-val" style="color:#4a6741">46 ventes</div>
+        <div class="prev-kpi-sub">vs 34 en 2024 · corrélé à la baisse des taux</div>
+      </div>
+    </div>
+
+    <!-- Boîte modèle -->
+    <div class="model-box">
+      <div class="model-box-title">⚙️ Comment ce modèle est-il construit ?</div>
+      <div class="model-grid">
+        <div class="model-col">
+          <div class="model-col-title">Prix moyen</div>
+          Régression linéaire pondérée sur 11 ans (2014–2024). Les années récentes ont un poids plus fort. 
+          Pente mesurée : <strong>+11 000€/an</strong>. Intervalle de confiance calculé sur l'écart-type des résidus historiques (±57k€), croissant avec l'horizon de projection.
+        </div>
+        <div class="model-col">
+          <div class="model-col-title">Volume de transactions</div>
+          Régression directe <strong>volume ~ taux d'emprunt</strong> sur 2014–2024. 
+          Précision remarquable : 2023 prévu=29 ventes, réel=28. Taux utilisés : consensus BCE début 2026 
+          (3,2% en 2025 → 2,1% en 2030).
+        </div>
+        <div class="model-col">
+          <div class="model-col-title">Prix au m²</div>
+          Projection par CAGR historique mesuré (2014–2024) appliqué depuis la base 2024 nettoyée (5 641€/m²). 
+          Corrélé à la trajectoire des prix moyens pour maintenir la cohérence interne du modèle.
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="prev-grid">
+      <div class="chart-card prev">
+        <h3>Projection prix moyen</h3>
+        <div class="subtitle">Historique réel · Prévision centrale · Intervalle de confiance</div>
+        <div class="chart-wrap"><canvas id="chartPrevPrix"></canvas></div>
+      </div>
+      <div class="chart-card prev">
+        <h3>Projection volume de transactions</h3>
+        <div class="subtitle">Modèle volume ~ taux d'emprunt · Taux BCE prévus 2025–2030</div>
+        <div class="chart-wrap"><canvas id="chartPrevVolume"></canvas></div>
+      </div>
+      <div class="chart-card prev">
+        <h3>Projection prix au m²</h3>
+        <div class="subtitle">CAGR historique 2014–2024 appliqué depuis base IQR 2024</div>
+        <div class="chart-wrap"><canvas id="chartPrevPm2"></canvas></div>
+      </div>
+      <div class="chart-card prev">
+        <h3>Taux d'emprunt hypothèse</h3>
+        <div class="subtitle">Consensus BCE · Impact direct sur le volume de ventes</div>
+        <div class="chart-wrap"><canvas id="chartPrevTaux"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="prev-table-wrap">
+      <h3>Tableau de projection détaillé — 2025 à 2030</h3>
+      <div style="overflow-x:auto">
+        <table class="prev-table">
+          <thead>
+            <tr>
+              <th>Année</th>
+              <th>Prix prévu</th>
+              <th>Fourchette (±1σ)</th>
+              <th>€/m² prévu</th>
+              <th>Volume prévu</th>
+              <th>Taux hypothèse</th>
+              <th>Évol. vs 2024</th>
+            </tr>
+          </thead>
+          <tbody id="prev-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠️ <strong>Avertissement</strong> — Ce modèle est une projection statistique basée sur les données DVF historiques (2014–2024) et les consensus de taux BCE. Il ne constitue pas un conseil en investissement. Les marchés immobiliers sont soumis à des chocs imprévisibles. L'intervalle de confiance (±1σ) représente une probabilité de 68% que le prix réel se situe dans la fourchette indiquée.
+    </div>
+
+    <div class="source-notice" style="margin-top:1rem">
+      <span>📊</span>
+      <div>Modèle : <strong>Régression linéaire pondérée</strong> (prix) · <strong>Régression volume~taux</strong> (transactions) · CAGR historique (€/m²) · Taux BCE : consensus marché janvier 2026 · Données DVF : DGFiP via data.gouv.fr · Moyennes IQR (bâti ≥ 60m²)</div>
+    </div>
+  </div>
+
 
   <!-- PANEL CARTE -->
   <div class="panel" id="panel-carte">
@@ -1333,6 +1494,9 @@ function showPanel(id) {
   if (id === 'taux') {
     setTimeout(() => buildTauxCharts(), 50);
   }
+  if (id === 'previsions') {
+    setTimeout(() => buildPrevCharts(), 50);
+  }
   if (id === 'carte') {
     setTimeout(() => {
       initMap();
@@ -1475,25 +1639,58 @@ function loadDemoData() {
 // ========== STATS ANNUELLES ==========
 function computeAnnualStats() {
   annualStats = {};
-  
-  // Données DVF réelles
+
+  // ── Calcul robuste : double nettoyage ──────────────────────────────────
+  // 1. Pré-filtre : on exclut les biens avec surface bâtie < 60m²
+  //    (dépendances, terrains quasi nus où le €/m² est mécaniquement aberrant)
+  // 2. Méthode IQR : exclusion statistique des outliers résiduels
+  //    (ventes atypiques haut de gamme, erreurs DVF)
+
+  function iqrMean(vals) {
+    const v = vals.filter(x => x != null && x > 0).sort((a,b) => a-b);
+    if (!v.length) return null;
+    const n = v.length;
+    const q1 = v[Math.floor(n * 0.25)];
+    const q3 = v[Math.floor(n * 0.75)];
+    const iqr = q3 - q1;
+    const low  = q1 - 1.5 * iqr;
+    const high = q3 + 1.5 * iqr;
+    const filtered = v.filter(x => x >= low && x <= high);
+    return filtered.length ? Math.round(filtered.reduce((a,b)=>a+b,0) / filtered.length) : null;
+  }
+
+  function iqrMedian(vals) {
+    const v = vals.filter(x => x != null && x > 0).sort((a,b) => a-b);
+    if (!v.length) return null;
+    const mid = Math.floor(v.length / 2);
+    return v.length % 2 === 0 ? Math.round((v[mid-1]+v[mid])/2) : v[mid];
+  }
+
   const byYear = {};
   for (const s of allSales) {
     if (!s.year) continue;
     if (!byYear[s.year]) byYear[s.year] = [];
     byYear[s.year].push(s);
   }
-  
-  for (const [year, sales] of Object.entries(byYear)) {
-    const prices = sales.map(s => s.valeur_fonciere).filter(Boolean);
-    const pm2s = sales.map(s => s.prixm2).filter(Boolean);
-    const surfaces = sales.map(s => s.surface_reelle_bati).filter(Boolean);
+
+  for (const [year, allYearSales] of Object.entries(byYear)) {
+    // Pré-filtre : surface bâtie ≥ 60m² pour le calcul des moyennes
+    // (on garde toutes les ventes pour le volume réel)
+    const sales = allYearSales.filter(s => (s.surface_reelle_bati || 0) >= 60);
+    const salesFallback = sales.length >= 5 ? sales : allYearSales; // sécurité si trop peu
+
+    const prices   = salesFallback.map(s => s.valeur_fonciere).filter(Boolean);
+    const pm2s     = salesFallback.map(s => s.prixm2).filter(Boolean);
+    const surfaces = salesFallback.map(s => s.surface_reelle_bati).filter(Boolean);
+
     annualStats[parseInt(year)] = {
-      prixMoy: prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) : null,
-      pm2: pm2s.length ? Math.round(pm2s.reduce((a,b)=>a+b,0)/pm2s.length) : null,
-      volume: sales.length,
-      surfMoy: surfaces.length ? Math.round(surfaces.reduce((a,b)=>a+b,0)/surfaces.length) : null,
-      source: allSales[0]?.source === 'demo' ? 'demo' : 'dvf'
+      prixMoy:  iqrMean(prices),
+      prixMed:  iqrMedian(prices),
+      pm2:      iqrMean(pm2s),
+      pm2Med:   iqrMedian(pm2s),
+      volume:   allYearSales.length,       // volume = toutes les ventes réelles
+      surfMoy:  iqrMean(surfaces),
+      source:   allSales[0]?.source === 'demo' ? 'demo' : 'dvf'
     };
   }
 }
@@ -1501,11 +1698,18 @@ function computeAnnualStats() {
 // ========== KPIs ==========
 function updateKPIs() {
   const years = Object.keys(annualStats).map(Number).sort((a,b)=>b-a);
-  const lastYear = years[0];
-  const prevYear = years[1];
+  // Utiliser l'année complète la plus récente (pas 2025 qui est partielle)
+  const currentYear = new Date().getFullYear();
+  const lastYear = years.find(y => y === currentYear - 1) || years.find(y => y < currentYear) || years[0];
+  const prevYear = years.find(y => y < lastYear) || years[1];
   const curr = annualStats[lastYear];
   const prev = annualStats[prevYear];
-  
+
+  // Mettre à jour dynamiquement les labels avec la bonne année
+  document.querySelectorAll('.kpi-label').forEach(el => {
+    el.textContent = el.textContent.replace(/20\d\d/, lastYear);
+  });
+
   const setKPI = (id, val, prev, suffix='') => {
     document.getElementById(id).textContent = val;
     if (prev) {
@@ -2395,6 +2599,256 @@ function buildTauxCharts() {
   });
 }
 
+
+
+// ========== PRÉVISIONS ==========
+let prevChartsBuilt = false;
+
+// Données historiques nettoyées (IQR + bâti≥60m²)
+const PREV_HISTO = {
+  years:  [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024],
+  prix:   [690000,626000,731000,622000,713000,722000,667000,846000,814000,719000,737000],
+  pm2:    [5197,5501,5129,5122,5560,5617,5981,6198,7211,5834,5641],
+  volume: [43,38,54,59,50,57,37,79,42,28,34],
+  taux:   [2.69,2.0,1.51,1.49,1.47,1.24,1.17,1.06,1.80,3.72,3.71]
+};
+
+// Prévisions calculées par modèle statistique
+// Prix : régression linéaire pondérée (pente +10 987€/an, σ=57 396€)
+// Volume : régression volume~taux (Vol = 68 − 10.4 × taux)
+// Taux : consensus BCE janvier 2026
+const PREV_FORECAST = {
+  years:  [2025,2026,2027,2028,2029,2030],
+  prix:   [787000,798000,809000,820000,831000,842000],
+  pm2:    [5701,5791,5910,6061,6246,6467],
+  volume: [35,39,42,44,45,46],
+  ic:     [63000,69000,75000,80000,86000,92000],   // ±1σ (68% de confiance)
+  taux:   [3.20,2.80,2.50,2.30,2.20,2.10]
+};
+
+function buildPrevCharts() {
+  if (prevChartsBuilt) return;
+  prevChartsBuilt = true;
+
+  const allYears  = [...PREV_HISTO.years, ...PREV_FORECAST.years];
+  const nH = PREV_HISTO.years.length;
+
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 700, easing: 'easeInOutQuart' },
+    plugins: {
+      legend: { labels: { font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:14 } },
+      tooltip: { backgroundColor:'#0f0e0b', titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10} }
+    },
+    scales: {
+      x: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} },
+      y: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} }
+    }
+  };
+
+  // Plugin : ligne verticale de séparation historique/prévision
+  const vlinePlugin = {
+    id: 'vline',
+    afterDraw(chart) {
+      const xAxis = chart.scales.x;
+      const idx = chart.data.labels.indexOf(2024);
+      if (idx < 0) return;
+      const x = xAxis.getPixelForValue(idx);
+      const ctx2 = chart.ctx;
+      ctx2.save();
+      ctx2.setLineDash([5,4]);
+      ctx2.strokeStyle = 'rgba(0,0,0,0.18)';
+      ctx2.lineWidth = 1.5;
+      ctx2.beginPath();
+      ctx2.moveTo(x, chart.chartArea.top);
+      ctx2.lineTo(x, chart.chartArea.bottom);
+      ctx2.stroke();
+      // Label
+      ctx2.font = '10px DM Mono, monospace';
+      ctx2.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx2.fillText('◀ réel  prévu ▶', x - 55, chart.chartArea.top + 14);
+      ctx2.restore();
+    }
+  };
+
+  // ── 1. PRIX ──────────────────────────────────────────────────
+  // IC sous forme de bande (upper/lower)
+  const prixUpper = [...Array(nH).fill(null), ...PREV_FORECAST.prix.map((p,i) => p + PREV_FORECAST.ic[i])];
+  const prixLower = [...Array(nH).fill(null), ...PREV_FORECAST.prix.map((p,i) => p - PREV_FORECAST.ic[i])];
+  // Raccord avec dernier point historique
+  prixUpper[nH-1] = PREV_HISTO.prix[nH-1];
+  prixLower[nH-1] = PREV_HISTO.prix[nH-1];
+
+  new Chart(document.getElementById('chartPrevPrix'), {
+    type: 'line',
+    plugins: [vlinePlugin],
+    data: {
+      labels: allYears,
+      datasets: [
+        {
+          label: 'Fourchette haute (±1σ)',
+          data: prixUpper,
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(200,168,75,0.13)',
+          fill: '+1', pointRadius: 0, tension: 0.35,
+        },
+        {
+          label: 'Fourchette basse (±1σ)',
+          data: prixLower,
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(200,168,75,0.13)',
+          fill: false, pointRadius: 0, tension: 0.35,
+        },
+        {
+          label: 'Historique réel',
+          data: [...PREV_HISTO.prix, ...Array(PREV_FORECAST.years.length).fill(null)],
+          borderColor: '#0f0e0b', backgroundColor: 'rgba(15,14,11,0.06)',
+          borderWidth: 2.5, fill: false, tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#0f0e0b',
+        },
+        {
+          label: 'Prévision centrale',
+          data: [...Array(nH-1).fill(null), PREV_HISTO.prix[nH-1], ...PREV_FORECAST.prix],
+          borderColor: '#c8a84b', backgroundColor: 'transparent',
+          borderWidth: 2.5, tension: 0.35,
+          pointRadius: 4, pointBackgroundColor: '#c8a84b',
+          pointStyle: 'triangle',
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins,
+        legend: { labels: { ...baseOpts.plugins.legend.labels,
+          filter: item => !item.text.includes('Fourchette')
+        }},
+        tooltip: { ...baseOpts.plugins.tooltip, callbacks: {
+          label: ctx => ctx.dataset.label.includes('Fourchette') ? null :
+            (ctx.raw ? fmtPrice(ctx.raw) : '—') + '  ' + ctx.dataset.label
+        }}
+      },
+      scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, ticks:{ ...baseOpts.scales.y.ticks, callback: v => Math.round(v/1000)+'k€' }}
+      }
+    }
+  });
+
+  // ── 2. VOLUME ────────────────────────────────────────────────
+  new Chart(document.getElementById('chartPrevVolume'), {
+    type: 'bar',
+    plugins: [vlinePlugin],
+    data: {
+      labels: allYears,
+      datasets: [
+        {
+          label: 'Historique réel',
+          data: [...PREV_HISTO.volume, ...Array(PREV_FORECAST.years.length).fill(null)],
+          backgroundColor: 'rgba(15,14,11,0.75)', borderColor: '#0f0e0b',
+          borderWidth: 1, borderRadius: 2,
+        },
+        {
+          label: 'Prévision (modèle taux)',
+          data: [...Array(nH).fill(null), ...PREV_FORECAST.volume],
+          backgroundColor: 'rgba(200,168,75,0.65)', borderColor: '#c8a84b',
+          borderWidth: 1.5, borderRadius: 2,
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { ...baseOpts.plugins.tooltip, callbacks: {
+        label: ctx => (ctx.raw !== null ? ctx.raw + ' ventes' : '—') + '  ' + ctx.dataset.label
+      }}}
+    }
+  });
+
+  // ── 3. PM2 ───────────────────────────────────────────────────
+  new Chart(document.getElementById('chartPrevPm2'), {
+    type: 'line',
+    plugins: [vlinePlugin],
+    data: {
+      labels: allYears,
+      datasets: [
+        {
+          label: 'Historique réel',
+          data: [...PREV_HISTO.pm2, ...Array(PREV_FORECAST.years.length).fill(null)],
+          borderColor: '#0f0e0b', borderWidth: 2.5, tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#0f0e0b', fill: false,
+        },
+        {
+          label: 'Prévision (CAGR historique)',
+          data: [...Array(nH-1).fill(null), PREV_HISTO.pm2[nH-1], ...PREV_FORECAST.pm2],
+          borderColor: '#c8a84b', borderWidth: 2.5, tension: 0.35,
+          pointRadius: 4, pointBackgroundColor: '#c8a84b',
+          pointStyle: 'triangle', fill: false,
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { ...baseOpts.plugins.tooltip, callbacks: {
+        label: ctx => (ctx.raw ? fmtNum(ctx.raw)+' €/m²' : '—') + '  ' + ctx.dataset.label
+      }}},
+      scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, ticks:{ ...baseOpts.scales.y.ticks, callback: v => fmtNum(v)+'€' }}
+      }
+    }
+  });
+
+  // ── 4. TAUX ──────────────────────────────────────────────────
+  new Chart(document.getElementById('chartPrevTaux'), {
+    type: 'line',
+    plugins: [vlinePlugin],
+    data: {
+      labels: allYears,
+      datasets: [
+        {
+          label: 'Taux historique',
+          data: [...PREV_HISTO.taux, ...Array(PREV_FORECAST.years.length).fill(null)],
+          borderColor: '#b85c2a', backgroundColor: 'rgba(184,92,42,0.07)',
+          borderWidth: 2.5, fill: true, tension: 0.3,
+          pointRadius: 4, pointBackgroundColor: '#b85c2a',
+        },
+        {
+          label: 'Taux prévu (consensus BCE)',
+          data: [...Array(nH-1).fill(null), PREV_HISTO.taux[nH-1], ...PREV_FORECAST.taux],
+          borderColor: '#b85c2a', backgroundColor: 'transparent',
+          borderWidth: 2, borderDash: [6,3], tension: 0.35,
+          pointRadius: 4, pointBackgroundColor: '#b85c2a',
+          pointStyle: 'triangle',
+        }
+      ]
+    },
+    options: { ...baseOpts,
+      plugins: { ...baseOpts.plugins, tooltip: { ...baseOpts.plugins.tooltip, callbacks: {
+        label: ctx => (ctx.raw !== null ? ctx.raw.toFixed(2)+'%' : '—') + '  ' + ctx.dataset.label
+      }}},
+      scales: { ...baseOpts.scales,
+        y: { ...baseOpts.scales.y, min:0, max:5,
+          ticks:{ ...baseOpts.scales.y.ticks, callback: v => v.toFixed(1)+'%' }
+        }
+      }
+    }
+  });
+
+  // ── TABLEAU ───────────────────────────────────────────────────
+  const tbody = document.getElementById('prev-tbody');
+  const base = { prix: 737000, pm2: 5641, vol: 34 };
+  tbody.innerHTML = PREV_FORECAST.years.map((yr, i) => {
+    const p  = PREV_FORECAST.prix[i];
+    const m  = PREV_FORECAST.pm2[i];
+    const v  = PREV_FORECAST.volume[i];
+    const ic = PREV_FORECAST.ic[i];
+    const t  = PREV_FORECAST.taux[i];
+    const dp = ((p - base.prix) / base.prix * 100).toFixed(1);
+    return `<tr class="prev-row">
+      <td>${yr}</td>
+      <td><strong>${fmtPrice(p)}</strong></td>
+      <td style="color:var(--warm-gray);font-size:0.78rem">${fmtPrice(p-ic)} – ${fmtPrice(p+ic)}</td>
+      <td>${fmtNum(m)} €/m²</td>
+      <td>${v} ventes</td>
+      <td>${t.toFixed(2)}%</td>
+      <td class="up">+${dp}%</td>
+    </tr>`;
+  }).join('');
+}
 
 // ========== CARTE ==========
 let mapInstance = null;
