@@ -210,14 +210,16 @@
 
   /* TABS */
   .tabs {
-    display: flex; gap: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
     border-bottom: 2px solid var(--border);
     margin-bottom: 2.5rem;
   }
   .tab {
-    padding: 0.8rem 1.5rem;
+    padding: 0.7rem 1.2rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     cursor: pointer;
@@ -226,6 +228,7 @@
     border-bottom: 2px solid transparent;
     margin-bottom: -2px;
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .tab.active {
     color: var(--ink);
@@ -937,6 +940,9 @@
   .ann-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:1.2rem; margin-bottom:2.5rem; }
   .ann-card { background:var(--card); border:1px solid var(--border); border-radius:3px; overflow:hidden; transition:box-shadow 0.2s, transform 0.2s; }
   .ann-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.1); transform:translateY(-2px); }
+  .ann-card-photo { width:100%; height:180px; overflow:hidden; background:var(--border); }
+  .ann-card-photo img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s ease; }
+  .ann-card:hover .ann-card-photo img { transform:scale(1.05); }
   .ann-card-header { background:var(--ink); color:var(--cream); padding:0.9rem 1.1rem 0.7rem; position:relative; }
   .ann-card-prix { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
   .ann-card-pm2 { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--gold); margin-top:0.1rem; }
@@ -975,6 +981,85 @@
     .ann-grid { grid-template-columns:1fr; }
     .ann-vs-grid { grid-template-columns:1fr 1fr; }
     .ann-filters { gap:0.4rem; }
+  }
+
+
+
+
+  /* ===== COMPARAISON / QUARTIERS / SIMULATEUR ===== */
+  .comp-header { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
+  .comp-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.2rem; }
+  .comp-sub { font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--warm-gray); text-transform:uppercase; letter-spacing:0.05em; }
+  .comp-badge { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.07em; background:var(--ink); color:var(--gold); padding:0.35rem 0.9rem; border-radius:2px; }
+
+  .comp-kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
+  .comp-kpi { background:var(--card); border:1px solid var(--border); border-top:3px solid var(--border); padding:1rem 1.2rem; border-radius:2px; }
+  .comp-kpi-label { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--warm-gray); margin-bottom:0.5rem; }
+  .comp-kpi-val { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; }
+  .comp-kpi-sub { font-size:0.72rem; color:var(--warm-gray); margin-top:0.2rem; }
+  .comp-charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem; }
+  .chart-card.comp .chart-wrap { height:300px; }
+  .comp-table-wrap { background:var(--card); border:1px solid var(--border); border-radius:2px; overflow:hidden; margin-bottom:2rem; }
+  .comp-table-wrap h3 { font-family:'Playfair Display',serif; font-size:1rem; padding:1rem 1.2rem 0.8rem; border-bottom:1px solid var(--border); }
+  .comp-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  .comp-table th { background:var(--cream); font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
+  .comp-table td { padding:0.65rem 1rem; border-bottom:1px solid var(--border); }
+  .comp-row-highlight { background:rgba(200,168,75,0.08); font-weight:600; }
+  .comp-pos { color:#4a6741; font-weight:600; }
+  .comp-neg { color:#b85c2a; font-weight:600; }
+  .ref-badge { font-family:'DM Mono',monospace; font-size:0.62rem; background:var(--gold); color:var(--ink); padding:0.15rem 0.5rem; border-radius:2px; }
+
+  /* Quartiers */
+  .qrt-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+  .qrt-card { background:var(--card); border:1px solid var(--border); border-top:4px solid var(--qcolor,var(--gold)); border-radius:2px; padding:1.2rem; }
+  .qrt-name { font-family:'DM Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--warm-gray); margin-bottom:0.5rem; }
+  .qrt-pm2 { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--qcolor,var(--gold)); }
+  .qrt-prix { font-size:0.82rem; font-weight:600; margin-top:0.15rem; }
+  .qrt-vol { font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--warm-gray); margin-top:0.3rem; }
+  .qrt-desc { font-size:0.75rem; color:var(--warm-gray); margin-top:0.6rem; line-height:1.5; border-top:1px solid var(--border); padding-top:0.6rem; }
+  .qrt-bar { background:var(--border); border-radius:2px; height:4px; margin-top:0.8rem; }
+  .qrt-bar-fill { background:var(--qcolor,var(--gold)); height:4px; border-radius:2px; }
+
+  /* Simulateur */
+  .sim-layout { display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-bottom:2rem; }
+  .sim-section-title { font-family:'DM Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--warm-gray); margin-bottom:1.2rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
+  .sim-field { margin-bottom:1.2rem; }
+  .sim-field label { font-size:0.82rem; font-weight:600; display:block; margin-bottom:0.45rem; }
+  .sim-slider-row { display:flex; align-items:center; gap:1rem; }
+  .sim-slider-row input[type=range] { flex:1; accent-color:var(--gold); cursor:pointer; }
+  .sim-val { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--gold); font-weight:700; min-width:60px; text-align:right; }
+  .sim-btn-group { display:flex; gap:0.4rem; flex-wrap:wrap; }
+  .sim-btn-group button { font-family:'DM Mono',monospace; font-size:0.68rem; padding:0.3rem 0.7rem; border:1.5px solid var(--border); background:var(--card); border-radius:2px; cursor:pointer; transition:all 0.15s; }
+  .sim-btn-group button:hover { border-color:var(--ink); }
+  .sim-btn-group button.active { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+  .sim-field select { font-family:'DM Mono',monospace; font-size:0.75rem; padding:0.45rem 0.8rem; border:1.5px solid var(--border); background:var(--card); border-radius:2px; cursor:pointer; width:100%; }
+  .sim-results { background:var(--ink); color:var(--cream); border-radius:4px; padding:2rem; display:flex; flex-direction:column; gap:1.5rem; }
+  .sim-result-main { text-align:center; }
+  .sim-result-label { font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.07em; color:rgba(255,255,255,0.5); margin-bottom:0.5rem; }
+  .sim-result-prix { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:700; color:var(--gold); }
+  .sim-result-range { font-family:'DM Mono',monospace; font-size:0.72rem; color:rgba(255,255,255,0.5); margin-top:0.3rem; }
+  .sim-result-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .sim-result-item { background:rgba(255,255,255,0.06); border-radius:2px; padding:0.8rem 1rem; }
+  .sim-result-item-label { font-family:'DM Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.06em; color:rgba(255,255,255,0.45); margin-bottom:0.3rem; }
+  .sim-result-item-val { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--cream); }
+  .sim-gauge-wrap { }
+  .sim-gauge-label { font-family:'DM Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:rgba(255,255,255,0.45); margin-bottom:0.5rem; }
+  .sim-gauge { background:rgba(255,255,255,0.1); border-radius:4px; height:8px; position:relative; overflow:visible; }
+  .sim-gauge-fill { height:8px; border-radius:4px; background:linear-gradient(90deg,#4a6741,var(--gold),#b85c2a); transition:width 0.4s ease; }
+  .sim-gauge-marker { position:absolute; top:-4px; width:16px; height:16px; background:var(--gold); border-radius:50%; border:2px solid var(--ink); transform:translateX(-50%); transition:left 0.4s ease; }
+  .sim-gauge-ticks { display:flex; justify-content:space-between; margin-top:0.4rem; }
+  .sim-gauge-ticks span { font-family:'DM Mono',monospace; font-size:0.58rem; color:rgba(255,255,255,0.35); }
+  .sim-conseil { background:rgba(200,168,75,0.15); border:1px solid rgba(200,168,75,0.3); border-radius:3px; padding:0.8rem 1rem; font-size:0.78rem; line-height:1.6; color:rgba(255,255,255,0.85); }
+
+  @media(max-width:900px){
+    .comp-charts-grid, .sim-layout { grid-template-columns:1fr; }
+  }
+  @media(max-width:768px){
+    .comp-kpi-row { grid-template-columns:1fr 1fr; }
+    .qrt-grid { grid-template-columns:1fr 1fr; }
+    .comp-table { font-size:0.72rem; }
+    .comp-table th, .comp-table td { padding:0.4rem 0.5rem; }
+    .sim-result-prix { font-size:1.8rem; }
   }
 
 </style>
@@ -1039,6 +1124,8 @@
     <button class="tab" onclick="showPanel('taux')">Taux & Prix</button>
     <button class="tab" onclick="showPanel('previsions')">Prévisions</button>
     <button class="tab" onclick="showPanel('annonces')">Annonces 2026</button>
+    <button class="tab" onclick="showPanel('quartiers')">Carte Quartiers</button>
+    <button class="tab" onclick="showPanel('simulateur')">Simulateur</button>
     <button class="tab" onclick="showPanel('analyse')">Analyse IA</button>
   </div>
 
@@ -1061,9 +1148,9 @@
         <div class="chart-wrap"><canvas id="chartPm2"></canvas></div>
       </div>
       <div class="chart-card">
-        <h3>Distribution des prix 2024</h3>
-        <div class="subtitle">Répartition par tranche · données DVF</div>
-        <div class="chart-wrap"><canvas id="chartDistrib"></canvas></div>
+        <h3>Distribution des prix 2014–2025</h3>
+        <div class="subtitle">Nb de ventes par tranche de prix · toutes les années · données DVF</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chartDistrib"></canvas></div>
       </div>
       </div>
   </div>
@@ -1496,6 +1583,205 @@
     </div>
   </div>
 
+
+  <!-- PANEL CARTE QUARTIERS -->
+  <div class="panel" id="panel-quartiers">
+    <div class="comp-header">
+      <div>
+        <h2 class="comp-title">Prix par quartier — Marly-le-Roi</h2>
+        <div class="comp-sub">Analyse DVF 2014–2025 · 543 transactions · 5 quartiers identifiés</div>
+      </div>
+      <div class="comp-badge">5 quartiers</div>
+    </div>
+
+    <!-- Grille quartiers -->
+    <div class="qrt-grid">
+      <div class="qrt-card" style="--qcolor:#4a6741">
+        <div class="qrt-name">🌳 Les Ombrages</div>
+        <div class="qrt-pm2">5 537 €/m²</div>
+        <div class="qrt-prix">Prix moy. 838 k€</div>
+        <div class="qrt-vol">45 ventes · 2014–2025</div>
+        <div class="qrt-desc">Quartier résidentiel verdoyant et fermé. Maisons sur grands terrains, clientèle haut de gamme.</div>
+        <div class="qrt-bar"><div class="qrt-bar-fill" style="width:80%"></div></div>
+      </div>
+      <div class="qrt-card" style="--qcolor:#c8a84b">
+        <div class="qrt-name">🏛️ Le Village</div>
+        <div class="qrt-pm2">5 710 €/m²</div>
+        <div class="qrt-prix">Prix moy. 673 k€</div>
+        <div class="qrt-vol">42 ventes · 2014–2025</div>
+        <div class="qrt-desc">Cœur historique, maisons de ville et belles demeures. Très recherché, surfaces plus petites.</div>
+        <div class="qrt-bar"><div class="qrt-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="qrt-card" style="--qcolor:#b85c2a">
+        <div class="qrt-name">🌿 Les Grandes Terres</div>
+        <div class="qrt-pm2">5 397 €/m²</div>
+        <div class="qrt-prix">Prix moy. 696 k€</div>
+        <div class="qrt-vol">66 ventes · 2014–2025</div>
+        <div class="qrt-desc">Le quartier le plus actif. Maisons familiales variées, accès forêt, marché dynamique.</div>
+        <div class="qrt-bar"><div class="qrt-bar-fill" style="width:78%"></div></div>
+      </div>
+      <div class="qrt-card" style="--qcolor:#4a7a8a">
+        <div class="qrt-name">🏔️ Montval</div>
+        <div class="qrt-pm2">5 876 €/m²</div>
+        <div class="qrt-prix">Prix moy. 706 k€</div>
+        <div class="qrt-vol">38 ventes · 2014–2025</div>
+        <div class="qrt-desc">Vue dégagée sur Paris. Très prisé pour ses panoramas, prix au m² parmi les plus élevés.</div>
+        <div class="qrt-bar"><div class="qrt-bar-fill" style="width:88%"></div></div>
+      </div>
+      <div class="qrt-card" style="--qcolor:#6a6a6a">
+        <div class="qrt-name">🌲 Bas des Ormes</div>
+        <div class="qrt-pm2">5 298 €/m²</div>
+        <div class="qrt-prix">Prix moy. 610 k€</div>
+        <div class="qrt-vol">55 ventes · 2014–2025</div>
+        <div class="qrt-desc">Entrée de ville côté Versailles. Maisons plus accessibles, terrain bien desservi.</div>
+        <div class="qrt-bar"><div class="qrt-bar-fill" style="width:72%"></div></div>
+      </div>
+    </div>
+
+    <!-- Graphique comparatif quartiers -->
+    <div class="chart-card" style="margin-top:2rem">
+      <h3>€/m² moyen par quartier vs moyenne Marly</h3>
+      <div class="subtitle">Données DVF 2014–2025 · Moyenne IQR (bâti ≥ 60m²)</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartQrtPm2"></canvas></div>
+    </div>
+
+    <div class="source-notice" style="margin-top:1rem">
+      <span>🔬</span>
+      <div>Les quartiers sont identifiés par correspondance de rue dans les données DVF. <strong>246 ventes</strong> sur 543 sont attribuées à un quartier précis (45%). Les ventes restantes (55%) sont dans des rues non classifiées. Prix calculés par méthode IQR.</div>
+    </div>
+  </div>
+
+  <!-- PANEL SIMULATEUR VENDEUR -->
+  <div class="panel" id="panel-simulateur">
+    <div class="comp-header">
+      <div>
+        <h2 class="comp-title">Simulateur vendeur</h2>
+        <div class="comp-sub">Estimez la valeur de votre bien et votre net vendeur · Modèle DVF Marly-le-Roi 2014–2025</div>
+      </div>
+      <div class="comp-badge">Estimation</div>
+    </div>
+
+    <div class="sim-layout">
+      <!-- Formulaire -->
+      <div class="sim-form">
+        <div class="sim-section-title">Votre bien</div>
+
+        <div class="sim-field">
+          <label>Surface habitable (m²)</label>
+          <div class="sim-slider-row">
+            <input type="range" id="sim-surface" min="50" max="400" value="140" oninput="updateSim()">
+            <span class="sim-val" id="sim-surface-val">140 m²</span>
+          </div>
+        </div>
+
+        <div class="sim-field">
+          <label>Surface terrain (m²)</label>
+          <div class="sim-slider-row">
+            <input type="range" id="sim-terrain" min="0" max="3000" value="500" step="50" oninput="updateSim()">
+            <span class="sim-val" id="sim-terrain-val">500 m²</span>
+          </div>
+        </div>
+
+        <div class="sim-field">
+          <label>Nombre de pièces</label>
+          <div class="sim-btn-group" id="sim-pieces">
+            <button onclick="setPieces(3,this)">3p</button>
+            <button class="active" onclick="setPieces(5,this)">5p</button>
+            <button onclick="setPieces(6,this)">6p</button>
+            <button onclick="setPieces(7,this)">7p+</button>
+          </div>
+        </div>
+
+        <div class="sim-field">
+          <label>Quartier</label>
+          <select id="sim-quartier" onchange="updateSim()">
+            <option value="5641">Marly-le-Roi (moyenne)</option>
+            <option value="5710">Le Village (+1,2%)</option>
+            <option value="5876">Montval (+4,2%)</option>
+            <option value="5537">Les Ombrages (−1,8%)</option>
+            <option value="5397">Les Grandes Terres (−4,3%)</option>
+            <option value="5298">Bas des Ormes (−6,1%)</option>
+          </select>
+        </div>
+
+        <div class="sim-field">
+          <label>État général</label>
+          <div class="sim-btn-group" id="sim-etat">
+            <button onclick="setEtat(-0.12,this)">À rénover</button>
+            <button class="active" onclick="setEtat(0,this)">Bon état</button>
+            <button onclick="setEtat(0.08,this)">Rénové récent</button>
+            <button onclick="setEtat(0.16,this)">Exceptionnel</button>
+          </div>
+        </div>
+
+        <div class="sim-field">
+          <label>DPE</label>
+          <div class="sim-btn-group" id="sim-dpe">
+            <button onclick="setDpe(-0.08,this)">F/G</button>
+            <button onclick="setDpe(-0.04,this)">E</button>
+            <button class="active" onclick="setDpe(0,this)">D</button>
+            <button onclick="setDpe(0.03,this)">C</button>
+            <button onclick="setDpe(0.06,this)">A/B</button>
+          </div>
+        </div>
+
+        <div class="sim-field">
+          <label>Honoraires agence (%)</label>
+          <div class="sim-slider-row">
+            <input type="range" id="sim-hono" min="0" max="8" value="4" step="0.5" oninput="updateSim()">
+            <span class="sim-val" id="sim-hono-val">4,0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Résultats -->
+      <div class="sim-results">
+        <div class="sim-result-main">
+          <div class="sim-result-label">Estimation marché</div>
+          <div class="sim-result-prix" id="sim-prix-est">—</div>
+          <div class="sim-result-range" id="sim-prix-range">—</div>
+        </div>
+
+        <div class="sim-result-grid">
+          <div class="sim-result-item">
+            <div class="sim-result-item-label">Prix au m²</div>
+            <div class="sim-result-item-val" id="sim-pm2">—</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="sim-result-item-label">Net vendeur</div>
+            <div class="sim-result-item-val" id="sim-net">—</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="sim-result-item-label">Frais agence</div>
+            <div class="sim-result-item-val" id="sim-frais-agence">—</div>
+          </div>
+          <div class="sim-result-item">
+            <div class="sim-result-item-label">Frais notaire acq.</div>
+            <div class="sim-result-item-val" id="sim-notaire">—</div>
+          </div>
+        </div>
+
+        <div class="sim-gauge-wrap">
+          <div class="sim-gauge-label">Positionnement vs marché Marly 2024</div>
+          <div class="sim-gauge">
+            <div class="sim-gauge-fill" id="sim-gauge-fill"></div>
+            <div class="sim-gauge-marker" id="sim-gauge-marker"></div>
+          </div>
+          <div class="sim-gauge-ticks">
+            <span>300k€</span><span>600k€</span><span>900k€</span><span>1.2M€</span><span>1.5M€+</span>
+          </div>
+        </div>
+
+        <div class="sim-conseil" id="sim-conseil"></div>
+      </div>
+    </div>
+
+    <div class="source-notice" style="margin-top:2rem">
+      <span>⚠️</span>
+      <div>Estimation indicative basée sur le prix au m² moyen DVF Marly-le-Roi 2024 (IQR nettoyé), ajusté par quartier, état et DPE. Ne remplace pas une expertise professionnelle. Les prix réels peuvent varier de ±15% selon les spécificités du bien.</div>
+    </div>
+  </div>
+
   <!-- PANEL CARTE -->
   <div class="panel" id="panel-carte">
     <div class="map-container">
@@ -1676,6 +1962,12 @@ function showPanel(id) {
   }
   if (id === 'annonces') {
     setTimeout(() => buildAnnCharts(), 50);
+  }
+  if (id === 'quartiers') {
+    setTimeout(() => buildQrtChart(), 50);
+  }
+  if (id === 'simulateur') {
+    setTimeout(() => updateSim(), 50);
   }
   if (id === 'carte') {
     setTimeout(() => {
@@ -2054,23 +2346,70 @@ function buildCharts() {
   // Distribution prix 2024
   const lastYear = Math.max(...Object.keys(annualStats).map(Number));
   const salesLastYear = allSales.filter(s => s.year === lastYear && s.valeur_fonciere);
-  const tranches = ['< 500k', '500-700k', '700-900k', '900k-1.2M', '> 1.2M'];
-  const counts = [
-    salesLastYear.filter(s=>s.valeur_fonciere<500000).length || Math.round((annualStats[lastYear].volume||10)*0.1),
-    salesLastYear.filter(s=>s.valeur_fonciere>=500000&&s.valeur_fonciere<700000).length || Math.round((annualStats[lastYear].volume||10)*0.28),
-    salesLastYear.filter(s=>s.valeur_fonciere>=700000&&s.valeur_fonciere<900000).length || Math.round((annualStats[lastYear].volume||10)*0.32),
-    salesLastYear.filter(s=>s.valeur_fonciere>=900000&&s.valeur_fonciere<1200000).length || Math.round((annualStats[lastYear].volume||10)*0.2),
-    salesLastYear.filter(s=>s.valeur_fonciere>=1200000).length || Math.round((annualStats[lastYear].volume||10)*0.1),
-  ];
+  // Histogramme multi-années : distribution des prix 2014-2025
+  const distribYears = [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+  const distribTranches = ['< 400k','400-600k','600-800k','800k-1M','1-1.5M','> 1.5M'];
+  const distribBornes = [0,400000,600000,800000,1000000,1500000,Infinity];
+  // Couleur par tranche (du moins cher au plus cher)
+  const distribColors = ['#4a8c55','#7ab55a','#c8a84b','#d4824a','#b85c2a','#8b2a1a'];
+
+  // Compter les ventes par tranche pour chaque année depuis allSales
+  const byYearDistrib = {};
+  for (const s of allSales) {
+    if (!s.year || !s.valeur_fonciere) continue;
+    if (!byYearDistrib[s.year]) byYearDistrib[s.year] = [];
+    byYearDistrib[s.year].push(s.valeur_fonciere);
+  }
+
+  const distribDatasets = distribTranches.map((t, ti) => ({
+    label: t,
+    data: distribYears.map(y => {
+      const prices = byYearDistrib[y] || [];
+      return prices.filter(p => p >= distribBornes[ti] && p < distribBornes[ti+1]).length;
+    }),
+    backgroundColor: distribColors[ti] + 'cc',
+    borderColor: distribColors[ti],
+    borderWidth: 1.5,
+    borderRadius: 3,
+  }));
+
   if (chartInstances.distrib) chartInstances.distrib.destroy();
   chartInstances.distrib = new Chart(document.getElementById('chartDistrib'), {
-    type: 'doughnut',
-    data: {
-      labels: tranches,
-      datasets: [{ data: counts, backgroundColor: ['#4a6741','#c8a84b','#b85c2a','#0f0e0b','#8a8075'], borderWidth: 2, borderColor: '#ffffff' }]
-    },
-    options: { responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'right', labels: { font: { family: 'DM Mono', size: 10 }, color: '#0f0e0b', padding: 12 } } }
+    type: 'bar',
+    data: { labels: distribYears, datasets: distribDatasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 600 },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:14, padding:12 }
+        },
+        tooltip: {
+          backgroundColor: '#0f0e0b',
+          titleFont: {family:'DM Mono',size:10},
+          bodyFont: {family:'DM Mono',size:10},
+          callbacks: {
+            label: ctx => ctx.dataset.label + ' : ' + ctx.raw + ' vente' + (ctx.raw>1?'s':'')
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: {color:'#e8e0d0'},
+          ticks: {font:{family:'DM Mono',size:10}, color:'#8a8075'}
+        },
+        y: {
+          stacked: true,
+          grid: {color:'#e8e0d0'},
+          ticks: {
+            font: {family:'DM Mono',size:10}, color:'#8a8075',
+            stepSize: 10,
+            callback: v => v + ' v.'
+          }
+        }
+      }
     }
   });
 
@@ -3061,22 +3400,22 @@ function buildPrevCharts() {
 let annChartsBuilt = false;
 
 const ANNONCES_DATA = [
-  { titre:"Demeure debut XXe - Parc royal",    prix:1750000, surface:430, terrain:2176, pieces:11, chambres:6, dpe:"E", agence:"L'Adresse Arbeau Marly" },
-  { titre:"Maison familiale - vue Paris",      prix:780000,  surface:146, terrain:1216, pieces:6,  chambres:4, dpe:"D", agence:"Etienne Petit" },
-  { titre:"Belle maison chaleureuse - gare",   prix:920000,  surface:139, terrain:450,  pieces:6,  chambres:4, dpe:"C", agence:"Rennes Immobilier" },
-  { titre:"Spacieuse - vue Paris / terrasse",  prix:780000,  surface:152, terrain:1216, pieces:7,  chambres:4, dpe:"D", agence:"BSK Immobilier" },
-  { titre:"Maison 4 pieces - proche gare",     prix:449000,  surface:105, terrain:0,    pieces:4,  chambres:3, dpe:"D", agence:"iad France" },
-  { titre:"Grandes Terres - exclusivite",      prix:945000,  surface:180, terrain:800,  pieces:7,  chambres:4, dpe:"D", agence:"Maisons de Famille" },
-  { titre:"Rue privee - calme absolu",         prix:759000,  surface:150, terrain:600,  pieces:6,  chambres:4, dpe:"D", agence:"Foncia" },
-  { titre:"Triangle d'or - triple sejour",    prix:1050000, surface:233, terrain:900,  pieces:8,  chambres:6, dpe:"E", agence:"Stephane Plaza" },
-  { titre:"Maison 92m2 - jardin et garage",    prix:499000,  surface:92,  terrain:305,  pieces:4,  chambres:3, dpe:"D", agence:"Stephane Plaza" },
-  { titre:"Propriete Louveciennes limite",     prix:1490000, surface:289, terrain:1200, pieces:9,  chambres:6, dpe:"E", agence:"Maisons de Famille" },
-  { titre:"Coup de coeur - proche village",    prix:449000,  surface:90,  terrain:200,  pieces:4,  chambres:3, dpe:"E", agence:"Maisons de Famille" },
-  { titre:"Domaine des Ombrages - 966m2",      prix:1695000, surface:250, terrain:966,  pieces:9,  chambres:6, dpe:"D", agence:"Immoperf" },
-  { titre:"Ombrages 100m2 - jardin",           prix:780000,  surface:100, terrain:400,  pieces:5,  chambres:3, dpe:"C", agence:"iad France" },
-  { titre:"Maison de ville - Quartier Village",prix:595000,  surface:121, terrain:0,    pieces:5,  chambres:3, dpe:"C", agence:"Keller Williams" },
-  { titre:"L'Etang-la-Ville - charme ancien", prix:1050000, surface:200, terrain:800,  pieces:7,  chambres:5, dpe:"D", agence:"AVLMA" },
-  { titre:"L'Etang-la-Ville - village calme", prix:920000,  surface:180, terrain:700,  pieces:7,  chambres:4, dpe:"D", agence:"AVLMA" },
+  { titre:"Demeure debut XXe - Parc royal",    prix:1750000, surface:430, terrain:2176, pieces:11, chambres:6, dpe:"E", agence:"L'Adresse Arbeau Marly",  photo:"https://photo.superimmo.com/j869niqdzuazvzztimbuorwf9y30" },
+  { titre:"Maison familiale - vue Paris",      prix:780000,  surface:146, terrain:1216, pieces:6,  chambres:4, dpe:"D", agence:"Etienne Petit",            photo:"https://photo.superimmo.com/v68ga4kz82pxg1ifh1uq16opuvtu" },
+  { titre:"Belle maison chaleureuse - gare",   prix:920000,  surface:139, terrain:450,  pieces:6,  chambres:4, dpe:"C", agence:"Rennes Immobilier",        photo:"https://photo.superimmo.com/ss8w3kpzqwzpv6rkxdf9ta16i02j" },
+  { titre:"Spacieuse - vue Paris / terrasse",  prix:780000,  surface:152, terrain:1216, pieces:7,  chambres:4, dpe:"D", agence:"BSK Immobilier",           photo:"https://photo.superimmo.com/vy6g6s8bhvt0sq9xtr1g4395jnr1" },
+  { titre:"Maison 4 pieces - proche gare",     prix:449000,  surface:105, terrain:0,    pieces:4,  chambres:3, dpe:"D", agence:"iad France",               photo:"https://photo.superimmo.com/oo5tlvlno2kkbpjcw27p57nazsj7" },
+  { titre:"Grandes Terres - exclusivite",      prix:945000,  surface:180, terrain:800,  pieces:7,  chambres:4, dpe:"D", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/o/e/a/6609adc9-e4a9-4ca1-8947-33cd1bec4b75_ptw0.jpeg" },
+  { titre:"Rue privee - calme absolu",         prix:759000,  surface:150, terrain:600,  pieces:6,  chambres:4, dpe:"D", agence:"Foncia",                   photo:"https://storage.etreproprio.com/classified/image/thumb/a/b/a/e61adbd2-a034-49a0-9e62-d4993dd15f71_ptw0.jpeg" },
+  { titre:"Triangle d'or - triple sejour",    prix:1050000, surface:233, terrain:900,  pieces:8,  chambres:6, dpe:"E", agence:"Stephane Plaza",           photo:"https://storage.etreproprio.com/classified/image/thumb/z/f/e/743eb814-9875-4756-9b9d-00b8d479e69e_ptw0.jpeg" },
+  { titre:"Maison 92m2 - jardin et garage",    prix:499000,  surface:92,  terrain:305,  pieces:4,  chambres:3, dpe:"D", agence:"Stephane Plaza",           photo:"https://storage.etreproprio.com/classified/image/thumb/u/t/u/45f526f7-bf20-41f1-bcf0-72fe5a8b9ddb_ptw0.jpeg" },
+  { titre:"Propriete Louveciennes limite",     prix:1490000, surface:289, terrain:1200, pieces:9,  chambres:6, dpe:"E", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/j/g/j/e8c12f64-ef24-46ed-86f3-bb404ef1fc70_ptw0.jpeg" },
+  { titre:"Coup de coeur - proche village",    prix:449000,  surface:90,  terrain:200,  pieces:4,  chambres:3, dpe:"E", agence:"Maisons de Famille",       photo:"https://storage.etreproprio.com/classified/image/thumb/h/w/f/c0331a94-4959-4c6e-8601-b719205b0439_ptw0.jpeg" },
+  { titre:"Domaine des Ombrages - 966m2",      prix:1695000, surface:250, terrain:966,  pieces:9,  chambres:6, dpe:"D", agence:"Immoperf",                 photo:"https://storage.etreproprio.com/classified/image/thumb/r/g/q/58e7de99-2ff8-4e8c-a2f4-ead516027d6b_ptw0.jpeg" },
+  { titre:"Ombrages 100m2 - jardin",           prix:780000,  surface:100, terrain:400,  pieces:5,  chambres:3, dpe:"C", agence:"iad France",               photo:"https://storage.etreproprio.com/classified/image/thumb/o/e/a/6609adc9-e4a9-4ca1-8947-33cd1bec4b75_ptw0.jpeg" },
+  { titre:"Maison de ville - Quartier Village",prix:595000,  surface:121, terrain:0,    pieces:5,  chambres:3, dpe:"C", agence:"Keller Williams",          photo:"https://storage.etreproprio.com/classified/image/thumb/k/z/o/ed6fc731-ddf0-4384-b87b-5fcfdab83d99_ptw0.jpeg" },
+  { titre:"L'Etang-la-Ville - charme ancien", prix:1050000, surface:200, terrain:800,  pieces:7,  chambres:5, dpe:"D", agence:"AVLMA",                    photo:"https://storage.etreproprio.com/classified/image/thumb/v/o/z/ce12947f-2670-4ba0-ad7a-162d43fc0668_ptw0.jpeg" },
+  { titre:"L'Etang-la-Ville - village calme", prix:920000,  surface:180, terrain:700,  pieces:7,  chambres:4, dpe:"D", agence:"AVLMA",                    photo:"https://storage.etreproprio.com/classified/image/thumb/n/d/l/a4a0b1e2-d840-409b-848a-ff98ebb06805_ptw0.jpeg" },
 ].map(a => ({ ...a, pm2: Math.round(a.prix / a.surface) }));
 
 let annFiltered = [...ANNONCES_DATA];
@@ -3094,8 +3433,12 @@ function renderAnnCards() {
   count.textContent = annFiltered.length + ' annonce' + (annFiltered.length > 1 ? 's' : '') + ' affichee' + (annFiltered.length > 1 ? 's' : '');
   grid.innerHTML = annFiltered.map(a => {
     const terr = a.terrain > 0 ? `<span class="ann-card-spec">&#127807; <strong>${fmtNum(a.terrain)}m&sup2;</strong> terrain</span>` : '';
+    const photoHtml = a.photo
+      ? `<div class="ann-card-photo"><img src="${a.photo}" alt="${a.titre}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+      : '';
     return `
     <div class="ann-card">
+      ${photoHtml}
       <div class="ann-card-header">
         <div class="ann-card-prix">${fmtPrice(a.prix)}</div>
         <div class="ann-card-pm2">${fmtNum(a.pm2)} &euro;/m&sup2;</div>
@@ -3195,6 +3538,127 @@ function buildAnnComparCharts() {
       scales: { ...opts.scales, y: { ...opts.scales.y, ticks:{...opts.scales.y.ticks, callback: v => fmtNum(v)+'euro'} } }
     }
   });
+}
+
+
+// ========== QUARTIERS ==========
+let qrtChartBuilt = false;
+function buildQrtChart() {
+  if (qrtChartBuilt) return;
+  qrtChartBuilt = true;
+  const qnames = ['Bas des Ormes','Les Grandes Terres','Les Ombrages','Le Village','Montval','Marly moy.'];
+  const qpm2   = [5298, 5397, 5537, 5710, 5876, 5641];
+  const qcolors = ['#6a6a6a','#b85c2a','#4a6741','#c8a84b','#4a7a8a','rgba(200,168,75,0.4)'];
+  new Chart(document.getElementById('chartQrtPm2'), {
+    type:'bar',
+    data:{
+      labels: qnames,
+      datasets:[{
+        label:'€/m² moyen',
+        data: qpm2,
+        backgroundColor: qcolors,
+        borderColor: qcolors.map(c => c.replace('0.4)','1)')),
+        borderWidth:1.5, borderRadius:3,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      animation:{duration:600},
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#0f0e0b', titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10},
+          callbacks:{ label: ctx => fmtNum(ctx.raw)+' €/m²' }
+        },
+        annotation:{
+          annotations:{
+            line1:{type:'line', yMin:5641, yMax:5641, borderColor:'rgba(200,168,75,0.7)', borderWidth:2, borderDash:[5,4],
+              label:{content:'Moy. Marly', enabled:true, font:{family:'DM Mono',size:9}, color:'#c8a84b', backgroundColor:'transparent'}
+            }
+          }
+        }
+      },
+      scales:{
+        x:{grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10},color:'#8a8075'}},
+        y:{grid:{color:'#e8e0d0'}, min:5000,
+          ticks:{font:{family:'DM Mono',size:10},color:'#8a8075', callback: v => fmtNum(v)+'€'}
+        }
+      }
+    }
+  });
+}
+
+// ========== SIMULATEUR ==========
+let simPieces = 5;
+let simEtat   = 0;
+let simDpe    = 0;
+
+function setPieces(n, btn) {
+  simPieces = n;
+  document.querySelectorAll('#sim-pieces button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateSim();
+}
+function setEtat(v, btn) {
+  simEtat = v;
+  document.querySelectorAll('#sim-etat button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateSim();
+}
+function setDpe(v, btn) {
+  simDpe = v;
+  document.querySelectorAll('#sim-dpe button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateSim();
+}
+
+function updateSim() {
+  const surface = parseInt(document.getElementById('sim-surface').value);
+  const terrain = parseInt(document.getElementById('sim-terrain').value);
+  const pm2Base = parseInt(document.getElementById('sim-quartier').value);
+  const hono    = parseFloat(document.getElementById('sim-hono').value);
+
+  document.getElementById('sim-surface-val').textContent = surface + ' m²';
+  document.getElementById('sim-terrain-val').textContent = terrain + ' m²';
+  document.getElementById('sim-hono-val').textContent = hono.toFixed(1) + '%';
+
+  // Modèle de prix
+  // Bonus terrain : +15€/m² de terrain au-dessus de 300m²
+  const terrainBonus = Math.max(0, (terrain - 300)) * 15;
+  // Bonus/malus pièces
+  const piecesMulti = {3:0.94, 5:1.00, 6:1.04, 7:1.08}[simPieces] || 1.0;
+  // Appliquer multiplicateurs
+  const pm2Final = Math.round(pm2Base * piecesMulti * (1 + simEtat) * (1 + simDpe));
+  const prixBase = Math.round(pm2Final * surface + terrainBonus);
+  const prixLow  = Math.round(prixBase * 0.90);
+  const prixHigh = Math.round(prixBase * 1.10);
+  const fraisAgence = Math.round(prixBase * hono / 100);
+  const netVendeur  = prixBase - fraisAgence;
+  const fraisNotaire = Math.round(prixBase * 0.08); // ~8% frais notaire acquéreur
+
+  document.getElementById('sim-prix-est').textContent = fmtPrice(prixBase);
+  document.getElementById('sim-prix-range').textContent = 'Fourchette : ' + fmtPrice(prixLow) + ' – ' + fmtPrice(prixHigh);
+  document.getElementById('sim-pm2').textContent = fmtNum(pm2Final) + ' €/m²';
+  document.getElementById('sim-net').textContent = fmtPrice(netVendeur);
+  document.getElementById('sim-frais-agence').textContent = fmtPrice(fraisAgence);
+  document.getElementById('sim-notaire').textContent = fmtPrice(fraisNotaire);
+
+  // Jauge (300k → 1.5M+)
+  const pct = Math.min(100, Math.max(0, (prixBase - 300000) / 1200000 * 100));
+  document.getElementById('sim-gauge-fill').style.width = pct + '%';
+  document.getElementById('sim-gauge-marker').style.left = pct + '%';
+
+  // Conseil contextuel
+  let conseil = '';
+  if (prixBase < 500000) conseil = '⚡ Bien accessible — forte demande dans cette tranche. Délai de vente estimé : 2–4 mois.';
+  else if (prixBase < 750000) conseil = '✅ Tranche cœur de marché à Marly. Meilleure liquidité, 55% des transactions DVF 2024.';
+  else if (prixBase < 1000000) conseil = '🎯 Marché sélectif — cibler les familles avec enfants. Délai estimé : 3–6 mois.';
+  else if (prixBase < 1500000) conseil = '🏛️ Marché premium. Acquéreurs rares et exigeants. Prévoir 6–12 mois de commercialisation.';
+  else conseil = '💎 Bien d\'exception. Marché de niche. Recommandez un mandat exclusif avec un spécialiste.';
+
+  if (simEtat < 0) conseil += ' 🔧 La décote travaux est déjà intégrée — valorisez les volumes et le potentiel.';
+  if (simDpe < 0) conseil += ' 🌡️ DPE faible : pensez à chiffrer les travaux de rénovation énergétique pour rassurer.';
+
+  document.getElementById('sim-conseil').textContent = conseil;
 }
 
 // ========== CARTE ==========
@@ -3368,6 +3832,8 @@ const origShowPanel = showPanel;
 // ========== INIT ==========
 window.addEventListener('load', () => {
   fetchDVF();
+  // Activer le panel tendances par défaut
+  document.getElementById('panel-tendances').classList.add('active');
 });
 </script>
 </body>
