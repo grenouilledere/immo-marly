@@ -1016,7 +1016,7 @@
   .comp-table-wrap { background:var(--card); border:1px solid var(--border); border-radius:2px; overflow:hidden; margin-bottom:2rem; }
   .comp-table-wrap h3 { font-family:'Playfair Display',serif; font-size:1rem; padding:1rem 1.2rem 0.8rem; border-bottom:1px solid var(--border); }
   .comp-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
-  .comp-table th { background:var(--cream); font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
+  .comp-table th { background:var(--cream); font-family:'DM Mono',monospace; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.06em; padding:0.6rem 1rem; text-align:left; border-bottom:1px solid var(--border); color:var(--ink); font-weight:700; }
   .comp-table td { padding:0.65rem 1rem; border-bottom:1px solid var(--border); }
   .comp-row-highlight { background:rgba(200,168,75,0.08); font-weight:600; }
   .comp-pos { color:#4a6741; font-weight:600; }
@@ -1138,6 +1138,7 @@
     <button class="tab" onclick="showPanel('taux')">Taux & Prix</button>
     <button class="tab" onclick="showPanel('previsions')">Prévisions</button>
     <button class="tab" onclick="showPanel('annonces')">Annonces 2026</button>
+    <button class="tab" onclick="showPanel('comparaison')">Comparaison</button>
     <button class="tab" onclick="showPanel('quartiers')">Carte Quartiers</button>
     <button class="tab" onclick="showPanel('simulateur')">Simulateur</button>
     <button class="tab" onclick="showPanel('analyse')">Analyse IA</button>
@@ -1598,6 +1599,142 @@
   </div>
 
 
+
+  <!-- PANEL COMPARAISON COMMUNES -->
+  <div class="panel" id="panel-comparaison">
+    <div class="comp-header">
+      <div>
+        <h2 class="comp-title">Comparaison avec les communes voisines</h2>
+        <div class="comp-sub">Source : DVF DGFiP · Maisons ≥60m² · Méthode IQR · 2014–2025 · 8 communes · données réelles</div>
+      </div>
+      <div class="comp-badge">✅ Données DVF réelles</div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="comp-kpi-row">
+      <div class="comp-kpi" style="border-top-color:var(--gold)">
+        <div class="comp-kpi-label">📍 Marly-le-Roi 2024</div>
+        <div class="comp-kpi-val">5 641 €/m²</div>
+        <div class="comp-kpi-sub">34 ventes · référence</div>
+      </div>
+      <div class="comp-kpi">
+        <div class="comp-kpi-label">🏆 Plus cher 2024</div>
+        <div class="comp-kpi-val">St-Germain</div>
+        <div class="comp-kpi-sub">8 036 €/m² · +43% vs Marly</div>
+      </div>
+      <div class="comp-kpi">
+        <div class="comp-kpi-label">💰 Plus accessible 2024</div>
+        <div class="comp-kpi-val">Bailly</div>
+        <div class="comp-kpi-sub">5 310 €/m² · −6% vs Marly</div>
+      </div>
+      <div class="comp-kpi">
+        <div class="comp-kpi-label">📈 Plus forte hausse 5 ans</div>
+        <div class="comp-kpi-val">Noisy-le-Roi</div>
+        <div class="comp-kpi-sub">+18% depuis 2019</div>
+      </div>
+    </div>
+
+    <!-- Graphiques pleine largeur -->
+    <div class="chart-card" style="margin-bottom:2rem">
+      <h3>Prix au m² — comparaison 2024</h3>
+      <div class="subtitle">Données DVF réelles · méthode IQR · maisons ≥60m²</div>
+      <div class="chart-wrap" style="height:320px"><canvas id="chartCompPm2"></canvas></div>
+    </div>
+    <div class="chart-card" style="margin-bottom:2rem">
+      <h3>Évolution comparative 2014–2025</h3>
+      <div class="subtitle">Index base 100 en 2014 · DVF réelles · Marly-le-Roi en trait plein or</div>
+      <div class="chart-wrap" style="height:400px"><canvas id="chartCompEvol"></canvas></div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="comp-table-wrap">
+      <h3>Tableau comparatif — données DVF 2024 · méthode IQR double</h3>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Commune</th>
+            <th>€/m² moy. 2024</th>
+            <th>vs Marly-le-Roi</th>
+            <th>Prix moy. 2024</th>
+            <th>Évol. €/m² 5 ans (2019→2024)</th>
+            <th>Ventes retenues / brut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="comp-row-highlight">
+            <td><strong>📍 Marly-le-Roi</strong></td>
+            <td><strong>5 641 €</strong></td>
+            <td><span class="ref-badge">référence</span></td>
+            <td>737 k€</td>
+            <td>+0,4%</td>
+            <td>34</td>
+          </tr>
+          <tr>
+            <td>Saint-Germain-en-Laye</td>
+            <td>8 036 €</td>
+            <td class="comp-pos">+42,5%</td>
+            <td>1 196 k€</td>
+            <td>+27,1%</td>
+            <td>71 / 73</td>
+          </tr>
+          <tr>
+            <td>La Celle-Saint-Cloud</td>
+            <td>7 374 €</td>
+            <td class="comp-pos">+30,7%</td>
+            <td>1 098 k€</td>
+            <td>+7,0%</td>
+            <td>64 / 70</td>
+          </tr>
+          <tr>
+            <td>Bougival</td>
+            <td>6 063 €</td>
+            <td class="comp-pos">+7,5%</td>
+            <td>829 k€</td>
+            <td>+0,4%</td>
+            <td>20 / 25</td>
+          </tr>
+          <tr>
+            <td>L'Étang-la-Ville</td>
+            <td>5 718 €</td>
+            <td class="comp-pos">+1,4%</td>
+            <td>789 k€</td>
+            <td>+9,7%</td>
+            <td>33 / 38</td>
+          </tr>
+          <tr>
+            <td>Louveciennes</td>
+            <td>5 716 €</td>
+            <td class="comp-pos">+1,3%</td>
+            <td>1 105 k€</td>
+            <td>−7,5%</td>
+            <td>26 / 27</td>
+          </tr>
+          <tr>
+            <td>Noisy-le-Roi</td>
+            <td>5 453 €</td>
+            <td class="comp-neg">−3,3%</td>
+            <td>748 k€</td>
+            <td>+10,3%</td>
+            <td>33 / 40</td>
+          </tr>
+          <tr>
+            <td>Bailly</td>
+            <td>5 310 €</td>
+            <td class="comp-neg">−5,9%</td>
+            <td>711 k€</td>
+            <td>+9,1%</td>
+            <td>14 / 16</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="source-notice">
+      <span>✅</span>
+      <div><strong>Source 100% DVF DGFiP</strong> · Données officielles de mutation foncière · Maisons bâti ≥ 60m² · Double filtre IQR appliqué sur prix/m² ET valeur foncière · <strong>502 ventes atypiques retirées</strong> sur 4 581 (11%) · Méthodologie identique à Marly-le-Roi. Le tableau indique n retenu / n total.</div>
+    </div>
+  </div>
+
   <!-- PANEL CARTE QUARTIERS -->
   <div class="panel" id="panel-quartiers">
     <div class="comp-header">
@@ -1976,6 +2113,9 @@ function showPanel(id) {
   }
   if (id === 'annonces') {
     setTimeout(() => buildAnnCharts(), 50);
+  }
+  if (id === 'comparaison') {
+    setTimeout(() => buildCompCharts(), 50);
   }
   if (id === 'quartiers') {
     setTimeout(() => buildQrtChart(), 50);
@@ -3619,6 +3759,105 @@ function buildAnnComparCharts() {
   });
 }
 
+
+
+// ========== COMPARAISON COMMUNES (DVF réelles) ==========
+let compChartsBuilt = false;
+
+const COMP_DATA = {
+  years: [2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],
+  // Données DVF réelles · Double filtre IQR (pm2 + prix) · Maisons bâti≥60m² · 502 ventes atypiques retirées sur 4581
+  communes: {
+    'Marly-le-Roi':          { pm2:[5197,5501,5129,5122,5560,5617,5981,6198,7211,5834,5641,5498], color:'#c8a84b', width:3, dash:[] },
+    'Saint-Germain-en-Laye': { pm2:[5937,5138,5670,5611,6345,6321,7172,7630,7862,8111,8036,7864], color:'#8b2a1a', width:1.5, dash:[] },
+    'La Celle-St-Cloud':     { pm2:[5965,6081,5854,6121,5788,6893,6557,6879,6980,8218,7374,5318], color:'#b85c2a', width:1.5, dash:[] },
+    'Bougival':              { pm2:[4920,5507,5809,5653,5605,6040,5870,7193,7135,6376,6063,6445], color:'#4a7a8a', width:1.5, dash:[] },
+    'Louveciennes':          { pm2:[5698,5284,6345,5162,5817,6181,6137,6637,7003,6677,5716,5682], color:'#7a9e5a', width:1.5, dash:[] },
+    "L\'Étang-la-Ville":    { pm2:[5056,4956,4806,4865,5167,5211,5144,5752,6201,6110,5718,5133], color:'#8a6a3a', width:1.5, dash:[] },
+    'Noisy-le-Roi':          { pm2:[4687,4134,4631,4659,4811,4943,5512,5372,5753,5496,5453,5210], color:'#4a6741', width:1.5, dash:[] },
+    'Bailly':                { pm2:[5079,4961,4681,5068,5401,4867,5306,5692,5800,6325,5310,4311], color:'#8a8075', width:1.5, dash:[] },
+  }
+};
+
+function buildCompCharts() {
+  if (compChartsBuilt) return;
+  compChartsBuilt = true;
+
+  const baseOpts = {
+    responsive:true, maintainAspectRatio:false, animation:{duration:600},
+    plugins:{
+      legend:{ labels:{font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:14, padding:8} },
+      tooltip:{ backgroundColor:'#0f0e0b', titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10} }
+    },
+    scales:{
+      x:{ grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} },
+      y:{ grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} }
+    }
+  };
+
+  // Chart 1 : barres pm2 2024
+  const communes2024 = Object.entries(COMP_DATA.communes)
+    .map(([name, d]) => ({ name, pm2: d.pm2[10], color: d.color }))
+    .sort((a,b) => a.pm2 - b.pm2);
+
+  new Chart(document.getElementById('chartCompPm2'), {
+    type:'bar',
+    data:{
+      labels: communes2024.map(c => c.name),
+      datasets:[{
+        label:'€/m² maison 2024 (DVF)',
+        data: communes2024.map(c => c.pm2),
+        backgroundColor: communes2024.map(c => c.name === 'Marly-le-Roi' ? 'rgba(200,168,75,0.9)' : c.color + '99'),
+        borderColor: communes2024.map(c => c.color),
+        borderWidth:1.5, borderRadius:3,
+      }]
+    },
+    options:{...baseOpts,
+      plugins:{...baseOpts.plugins, tooltip:{...baseOpts.plugins.tooltip, callbacks:{
+        label: ctx => fmtNum(ctx.raw) + ' €/m²'
+      }}},
+      scales:{...baseOpts.scales,
+        x:{ ...baseOpts.scales.x, ticks:{...baseOpts.scales.x.ticks, maxRotation:30, minRotation:20} },
+        y:{ ...baseOpts.scales.y, ticks:{...baseOpts.scales.y.ticks, callback: v => fmtNum(v)+'€'} }
+      }
+    }
+  });
+
+  // Chart 2 : évolution index base 100
+  const idx2014 = Object.fromEntries(Object.entries(COMP_DATA.communes).map(([n,d]) => [n, d.pm2[0]]));
+  new Chart(document.getElementById('chartCompEvol'), {
+    type:'line',
+    data:{
+      labels: COMP_DATA.years,
+      datasets: Object.entries(COMP_DATA.communes).map(([name, d]) => ({
+        label: name,
+        data: d.pm2.map(v => Math.round(v / idx2014[name] * 100)),
+        borderColor: d.color,
+        backgroundColor:'transparent',
+        borderWidth: name === 'Marly-le-Roi' ? 3.5 : 1.5,
+        borderDash: d.dash,
+        pointRadius: name === 'Marly-le-Roi' ? 5 : 3,
+        pointHoverRadius: 6,
+        tension:0.3,
+      }))
+    },
+    options:{...baseOpts,
+      plugins:{...baseOpts.plugins,
+        legend:{ position:'right', align:'center', labels:{font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:22, padding:10, usePointStyle:false} },
+        tooltip:{...baseOpts.plugins.tooltip, callbacks:{
+          title: ctx => 'Année ' + ctx[0].label,
+          label: ctx => ' ' + ctx.dataset.label + ' : idx ' + ctx.raw
+        }}
+      },
+      scales:{...baseOpts.scales,
+        y:{...baseOpts.scales.y,
+          title:{ display:true, text:'Index (base 100 = 2014)', font:{family:'DM Mono',size:10}, color:'#8a8075' },
+          ticks:{...baseOpts.scales.y.ticks, callback: v => 'idx '+v}
+        }
+      }
+    }
+  });
+}
 
 // ========== QUARTIERS ==========
 let qrtChartBuilt = false;
