@@ -1163,6 +1163,12 @@
         <div class="chart-wrap"><canvas id="chartPm2"></canvas></div>
       </div>
       <div class="chart-card">
+        <h3>Prix moyen & €/m² par taille de maison — Marly-le-Roi</h3>
+        <div class="subtitle">Toutes années 2014–2025 · méthode IQR · données DVF · 502 ventes</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chartSurfPrix"></canvas></div>
+      </div>
+
+      <div class="chart-card">
         <h3>Distribution des prix 2014–2025</h3>
         <div class="subtitle">Nb de ventes par tranche de prix · toutes les années · données DVF</div>
         <div class="chart-wrap" style="height:300px"><canvas id="chartDistrib"></canvas></div>
@@ -2104,7 +2110,10 @@ function showPanel(id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
   event.target.classList.add('active');
-  if (id === 'tendances' && !chartsBuilt && Object.keys(annualStats).length > 0) buildCharts();
+  if (id === 'tendances' && Object.keys(annualStats).length > 0) {
+    if (!chartsBuilt) buildCharts();
+    setTimeout(() => { buildSurfChart(); setTimeout(() => { const c = Chart.getChart('chartSurfPrix'); if (c) c.resize(); }, 150); }, 300);
+  }
   if (id === 'taux') {
     setTimeout(() => buildTauxCharts(), 50);
   }
@@ -2567,7 +2576,50 @@ function buildCharts() {
     }
   });
 
+  // Graphique prix par surface - appelé après rendu du panel
+  setTimeout(() => { buildSurfChart(); setTimeout(() => { const c = Chart.getChart('chartSurfPrix'); if (c) c.resize(); }, 200); }, 400);
+}
 
+
+// ========== CHART SURFACE ==========
+function buildSurfChart() {
+  const existingChart = Chart.getChart('chartSurfPrix');
+  if (existingChart) existingChart.destroy();
+  const surfTranches = ['60–99 m²','100–129 m²','130–159 m²','160–199 m²','200–249 m²','≥ 250 m²','Moyenne'];
+  const surfPrixMoy  = [540, 676, 744, 882, 1084, 995, 737];
+  const surfPm2Moy   = [6830, 5950, 5214, 5004, 4915, 3647, 5641];
+  const surfN        = [148, 124, 92, 84, 40, 14, 502];
+  new Chart(document.getElementById('chartSurfPrix'), {
+    type: 'bar',
+    data: {
+      labels: surfTranches,
+      datasets: [
+        { label:'Prix moyen (k\u20ac)', data:surfPrixMoy,
+          backgroundColor: surfPrixMoy.map((v,i) => i === surfPrixMoy.length-1 ? 'rgba(139,42,26,0.85)' : 'rgba(200,168,75,0.85)'),
+          borderColor: surfPrixMoy.map((v,i) => i === surfPrixMoy.length-1 ? '#8b2a1a' : '#c8a84b'),
+          borderWidth:1.5, borderRadius:3, yAxisID:'yPrix' },
+        { label:'\u20ac/m\u00b2 moyen', data:surfPm2Moy, type:'line', borderColor:'#4a6741', backgroundColor:'transparent', borderWidth:2.5,
+          pointRadius: surfPm2Moy.map((v,i) => i === surfPm2Moy.length-1 ? 8 : 5),
+          pointBackgroundColor: surfPm2Moy.map((v,i) => i === surfPm2Moy.length-1 ? '#8b2a1a' : '#4a6741'),
+          pointBorderColor: surfPm2Moy.map((v,i) => i === surfPm2Moy.length-1 ? '#8b2a1a' : '#4a6741'),
+          tension:0.3, yAxisID:'yPm2' }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: { display:true, labels:{font:{family:'DM Mono',size:10}, color:'#0f0e0b', boxWidth:14, padding:12} },
+        tooltip: { backgroundColor:'#0f0e0b', titleFont:{family:'DM Mono',size:10}, bodyFont:{family:'DM Mono',size:10},
+          callbacks: { afterBody: ctx => ['Nb ventes : ' + surfN[ctx[0].dataIndex]] }
+        }
+      },
+      scales: {
+        x: { grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#8a8075'} },
+        yPrix: { type:'linear', position:'left',  grid:{color:'#e8e0d0'}, ticks:{font:{family:'DM Mono',size:10}, color:'#c8a84b', callback:v=>v+'k\u20ac'}, title:{display:true, text:'Prix moyen (k\u20ac)', font:{family:'DM Mono',size:10}, color:'#c8a84b'} },
+        yPm2:  { type:'linear', position:'right', grid:{drawOnChartArea:false}, ticks:{font:{family:'DM Mono',size:10}, color:'#4a6741', callback:v=>v.toLocaleString('fr-FR')+'\u20ac'}, title:{display:true, text:'\u20ac/m\u00b2', font:{family:'DM Mono',size:10}, color:'#4a6741'} }
+      }
+    }
+  });
 }
 
 // ========== TABLE ==========
